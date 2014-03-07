@@ -139,7 +139,7 @@ class iTunesDirectory(PodcastDirectory):
         refs = []
         for id in SUBGENRES[genre]:
             logger.info('Subgenre: %d', id)
-            ref = Ref.directory(uri='/%d' % id, name=GENRES[id])
+            ref = Ref.directory(uri=str(id), name=GENRES[id])
             refs.append(ref)
         logger.info('Browse refs: %r', refs)
         return refs
