@@ -1,0 +1,8 @@
+include .coveragerc
+include Changes
+include LICENSE
+include MANIFEST.in
+include README.rst
+include mopidy_podcast_itunes/ext.conf
+
+recursive-include tests *.py
