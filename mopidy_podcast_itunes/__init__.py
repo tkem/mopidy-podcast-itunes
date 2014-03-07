@@ -4,6 +4,8 @@ from mopidy import config, ext
 
 __version__ = '0.0.1'
 
+EXPLICIT = ('Yes', 'No')
+
 
 class Extension(ext.Extension):
 
@@ -18,9 +20,14 @@ class Extension(ext.Extension):
 
     def get_config_schema(self):
         schema = super(Extension, self).get_config_schema()
-        schema['browse_label'] = config.String()
+        schema['base_url'] = config.String()
+        schema['label'] = config.String()
+        schema['country'] = config.String()
+        schema['limit'] = config.Integer(minimum=1, maximum=200)
+        schema['explicit'] = config.String(optional=True, choices=EXPLICIT)
+        schema['timeout'] = config.Integer(optional=True)
         return schema
 
     def setup(self, registry):
-        from .directory import ITunesDirectory
-        registry.add('podcast:directory', ITunesDirectory)
+        from .directory import iTunesDirectory
+        registry.add('podcast:directory', iTunesDirectory)
