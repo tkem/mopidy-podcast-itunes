@@ -13,16 +13,18 @@ from urlparse import urljoin
 from mopidy_podcast.directory import PodcastDirectory
 from mopidy_podcast.models import Ref
 
-PODCASTS_ID = '26'  # TODO: configure?
-CHARTS_NAME = 'audioPodcasts'  # TODO: configure, name
+ATTRIBUTES = {
+    PodcastDirectory.AUTHOR: 'authorTerm',
+    PodcastDirectory.CATEGORY: None,  # TODO
+    PodcastDirectory.DESCRIPTION: 'descriptionTerm',
+    PodcastDirectory.KEYWORDS: 'keywordsTerm',
+    PodcastDirectory.TITLE: 'titleTerm',
+}
 
+CHARTS_PATH = '/WebObjects/MZStoreServices.woa/ws/charts'
+GENRES_PATH = '/WebObjects/MZStoreServices.woa/ws/genres'
 LOOKUP_PATH = '/lookup'
 SEARCH_PATH = '/search'
-GENRES_PATH = '/WebObjects/MZStoreServices.woa/ws/genres'
-CHARTS_PATH = '/WebObjects/MZStoreServices.woa/ws/charts'
-# noqa https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/charts?cc=de&g=1301&name=VideoPodcasts&limit=10
-
-BROWSE_LIMIT = 20  # config
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +36,8 @@ def _to_refs(results):
         if 'feedUrl' not in result:
             logger.warn('Missing feedUrl for iTunes trackId %r', trackId)
             continue
-        name = result.get('trackName', 'iTunes trackId %r' % trackId)
+        name = result.get('trackName', 'iTunes ID %s' % trackId)
+        name += ' [Provided courtesy of iTunes]'  # legal matter
         refs.append(Ref.podcast(uri=result['feedUrl'], name=name))
     return refs
 
@@ -43,29 +46,36 @@ class iTunesDirectory(PodcastDirectory):
 
     name = 'itunes'
 
+    genre = None
+
     def __init__(self, backend):
         super(iTunesDirectory, self).__init__(backend)
         self.label = self.config['label']
         self.session = requests.Session()
+        self.charts_url = urljoin(self.config['base_url'], CHARTS_PATH)
+        self.genres_url = urljoin(self.config['base_url'], GENRES_PATH)
         self.lookup_url = urljoin(self.config['base_url'], LOOKUP_PATH)
         self.search_url = urljoin(self.config['base_url'], SEARCH_PATH)
-        self.genres_url = urljoin(self.config['base_url'], GENRES_PATH)
-        self.charts_url = urljoin(self.config['base_url'], CHARTS_PATH)
-        self.genre = self.get_genre(PODCASTS_ID)
+        try:
+            self.genres = self.get_genres(self.config['root_genre_id'])
+        except Exception as e:
+            logger.error('Error retrieving genres from iTunes Store: %r', e)
 
     @property
     def config(self):
         return self.backend.config['podcast-itunes']
 
     def browse(self, path):
-        genre = self.get_genre(PODCASTS_ID)
+        if not self.genres:
+            self.genres = self.get_genres(self.config['root_genre_id'])
+        genre = self.genres
         for id in path.split('/'):
             if not id:
-                continue  # absolute path
+                continue
             elif id in genre.get('subgenres', {}):
                 genre = genre['subgenres'][id]
             else:
-                logger.warn('Invalid iTunes genre: %s', id)
+                logger.warn('Invalid iTunes genre ID: %s', id)
         refs = _to_refs(self.get_charts(genre))
         for id, node in genre.get('subgenres', {}).items():
             uri = path + '/' + id
@@ -87,13 +97,11 @@ class iTunesDirectory(PodcastDirectory):
         })
         return _to_refs(result.get('results', []))
 
-    def get_genre(self, id):
-        if getattr(self, 'genre', None) and self.genre['id'] == id:
-            return self.genre
+    def get_genres(self, id):
         result = self.request(self.genres_url, params={'id': id})
-        genre = result.get(id)
-        self.get_charts(genre)  # preload
-        return genre
+        genres = result.get(id)
+        self.get_charts(genres)  # preload
+        return genres
 
     def get_charts(self, genre):
         if not genre:
@@ -108,8 +116,8 @@ class iTunesDirectory(PodcastDirectory):
         result = self.request(self.charts_url, params={
             'g': genre['id'],
             'cc': self.config['country'],
-            'name': CHARTS_NAME,
-            'limit': BROWSE_LIMIT
+            'name': self.config['charts_name'],
+            'limit': self.config['charts_limit']
         })
         charts = self.request(self.lookup_url, params={
             'id': ','.join(str(id) for id in result.get('resultIds', []))

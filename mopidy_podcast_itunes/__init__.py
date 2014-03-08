@@ -4,7 +4,7 @@ from mopidy import config, ext
 
 __version__ = '0.0.1'
 
-EXPLICIT = ('Yes', 'No')
+BOOL_CHOICES = ('Yes', 'No')
 
 
 class Extension(ext.Extension):
@@ -23,8 +23,11 @@ class Extension(ext.Extension):
         schema['base_url'] = config.String()
         schema['label'] = config.String()
         schema['country'] = config.String()
-        schema['limit'] = config.Integer(minimum=1, maximum=200)
-        schema['explicit'] = config.String(optional=True, choices=EXPLICIT)
+        schema['search_limit'] = config.Integer(minimum=1, maximum=200)
+        schema['root_genre_id'] = config.String()
+        schema['charts_name'] = config.String()
+        schema['charts_limit'] = config.Integer(minimum=1, maximum=200)
+        schema['explicit'] = config.String(optional=True, choices=BOOL_CHOICES)
         schema['timeout'] = config.Integer(optional=True)
         return schema
 
