@@ -9,7 +9,7 @@ import requests
 
 from urlparse import urljoin
 
-from mopidy_podcast import PodcastDirectory
+from mopidy_podcast.directory import PodcastDirectory
 from mopidy_podcast.models import Ref
 
 # TODO: load dynamically at startup
