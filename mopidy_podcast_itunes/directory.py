@@ -6,114 +6,37 @@ from __future__ import unicode_literals
 
 import logging
 import requests
+import time
 
 from urlparse import urljoin
 
 from mopidy_podcast.directory import PodcastDirectory
 from mopidy_podcast.models import Ref
 
-# TODO: load dynamically at startup
-GENRES = {
-    26: 'Podcasts',
-    1301: 'Arts',
-    1302: 'Personal Journals',
-    1303: 'Comedy',
-    1304: 'Education',
-    1305: 'Kids & Family',
-    1306: 'Food',
-    1307: 'Health',
-    1309: 'TV & Film',
-    1310: 'Music',
-    1311: 'News & Politics',
-    1314: 'Religion & Spirituality',
-    1315: 'Science & Medicine',
-    1316: 'Sports & Recreation',
-    1318: 'Technology',
-    1320: 'Places & Travel',
-    1321: 'Business',
-    1323: 'Games & Hobbies',
-    1324: 'Society & Culture',
-    1325: 'Government & Organizations',
-    1401: 'Literature',
-    1402: 'Design',
-    1404: 'Video Games',
-    1405: 'Performing Arts',
-    1406: 'Visual Arts',
-    1410: 'Careers',
-    1412: 'Investing',
-    1413: 'Management & Marketing',
-    1415: 'K-12',
-    1416: 'Higher Education',
-    1417: 'Fitness & Nutrition',
-    1420: 'Self-Help',
-    1421: 'Sexuality',
-    1438: 'Buddhism',
-    1439: 'Christianity',
-    1440: 'Islam',
-    1441: 'Judaism',
-    1443: 'Philosophy',
-    1444: 'Spirituality',
-    1446: 'Gadgets',
-    1448: 'Tech News',
-    1450: 'Podcasting',
-    1454: 'Automotive',
-    1455: 'Aviation',
-    1456: 'Outdoor',
-    1459: 'Fashion & Beauty',
-    1460: 'Hobbies',
-    1461: 'Other Games',
-    1462: 'History',
-    1463: 'Hinduism',
-    1464: 'Other',
-    1465: 'Professional',
-    1466: 'College & High School',
-    1467: 'Amateur',
-    1468: 'Educational Technology',
-    1469: 'Language Courses',
-    1470: 'Training',
-    1471: 'Business News',
-    1472: 'Shopping',
-    1473: 'National',
-    1474: 'Regional',
-    1475: 'Local',
-    1476: 'Non-Profit',
-    1477: 'Natural Sciences',
-    1478: 'Medicine',
-    1479: 'Social Sciences',
-    1480: 'Software How-To',
-    1481: 'Alternative Health',
-}
+PODCASTS_ID = '26'  # TODO: configure?
+CHARTS_NAME = 'audioPodcasts'  # TODO: configure, name
 
-SUBGENRES = {
-    26: [
-        1301, 1303, 1304, 1305, 1307, 1309, 1310, 1311, 1314, 1315, 1316, 1318,
-        1321, 1323, 1324, 1325
-    ],
-    1301: [1306, 1401, 1402, 1405, 1406, 1459],
-    1304: [1415, 1416, 1468, 1469, 1470],
-    1307: [1417, 1420, 1421, 1481],
-    1314: [1438, 1439, 1440, 1441, 1444, 1463, 1464],
-    1315: [1477, 1478, 1479],
-    1316: [1456, 1465, 1466, 1467],
-    1318: [1446, 1448, 1450, 1480],
-    1321: [1410, 1412, 1413, 1471, 1472],
-    1323: [1404, 1454, 1455, 1460, 1461],
-    1324: [1302, 1320, 1443, 1462],
-    1325: [1473, 1474, 1475, 1476],
-}
-
-ATTRIBUTES = {
-    PodcastDirectory.AUTHOR: 'authorTerm',
-    PodcastDirectory.CATEGORY: None,  # TODO
-    PodcastDirectory.DESCRIPTION: 'descriptionTerm',
-    PodcastDirectory.KEYWORDS: 'keywordsTerm',
-    PodcastDirectory.TITLE: 'titleTerm',
-}
-
+LOOKUP_PATH = '/lookup'
 SEARCH_PATH = '/search'
-BROWSE_PATH = '/WebObjects/MZStoreServices.woa/ws/genres'
+GENRES_PATH = '/WebObjects/MZStoreServices.woa/ws/genres'
+CHARTS_PATH = '/WebObjects/MZStoreServices.woa/ws/charts'
+# noqa https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/charts?cc=de&g=1301&name=VideoPodcasts&limit=10
+
+BROWSE_LIMIT = 20  # config
 
 logger = logging.getLogger(__name__)
+
+
+def _to_refs(results):
+    refs = []
+    for result in results:
+        trackId = result.get('trackId')
+        if 'feedUrl' not in result:
+            logger.warn('Missing feedUrl for iTunes trackId %r', trackId)
+            continue
+        name = result.get('trackName', 'iTunes trackId %r' % trackId)
+        refs.append(Ref.podcast(uri=result['feedUrl'], name=name))
+    return refs
 
 
 class iTunesDirectory(PodcastDirectory):
@@ -123,31 +46,37 @@ class iTunesDirectory(PodcastDirectory):
     def __init__(self, backend):
         super(iTunesDirectory, self).__init__(backend)
         self.label = self.config['label']
-        self.search_url = urljoin(self.config['base_url'], SEARCH_PATH)
-        self.browse_url = urljoin(self.config['base_url'], BROWSE_PATH)
         self.session = requests.Session()
+        self.lookup_url = urljoin(self.config['base_url'], LOOKUP_PATH)
+        self.search_url = urljoin(self.config['base_url'], SEARCH_PATH)
+        self.genres_url = urljoin(self.config['base_url'], GENRES_PATH)
+        self.charts_url = urljoin(self.config['base_url'], CHARTS_PATH)
+        self.genre = self.get_genre(PODCASTS_ID)
 
     @property
     def config(self):
         return self.backend.config['podcast-itunes']
 
     def browse(self, path):
-        genre = int(path.lstrip('/') or 26)
-        logger.info('Browse genre: %d', genre)
-        if genre not in SUBGENRES:
-            return []
-        refs = []
-        for id in SUBGENRES[genre]:
-            logger.info('Subgenre: %d', id)
-            ref = Ref.directory(uri=str(id), name=GENRES[id])
+        genre = self.get_genre(PODCASTS_ID)
+        for id in path.split('/'):
+            if not id:
+                continue  # absolute path
+            elif id in genre.get('subgenres', {}):
+                genre = genre['subgenres'][id]
+            else:
+                logger.warn('Invalid iTunes genre: %s', id)
+        refs = _to_refs(self.get_charts(genre))
+        for id, node in genre.get('subgenres', {}).items():
+            uri = path + '/' + id
+            ref = Ref.directory(uri=uri, name=node['name'])
             refs.append(ref)
-        logger.info('Browse refs: %r', refs)
         return refs
 
     def search(self, terms=None, attribute=None):
         if not terms:
             return []
-        response = self.session.get(self.search_url, params={
+        result = self.request(self.search_url, params={
             'term': '+'.join(terms),
             'country': self.config['country'],
             'media': 'podcast',
@@ -155,14 +84,41 @@ class iTunesDirectory(PodcastDirectory):
             'attribute': ATTRIBUTES[attribute] if attribute else None,
             'limit': self.config['limit'],
             'explicit': self.config['explicit']
-        }, timeout=self.config['timeout'])
+        })
+        return _to_refs(result.get('results', []))
 
-        refs = []
-        for result in response.json().get('results', []):
-            trackId = result.get('trackId', 'n/a')
-            if 'feedUrl' not in result:
-                logger.warn('Missing feedUrl for iTunes trackId %s', trackId)
-                continue
-            name = result.get('trackName', 'iTunes trackId %s' % trackId)
-            refs.append(Ref.podcast(uri=result['feedUrl'], name=name))
-        return refs
+    def get_genre(self, id):
+        if getattr(self, 'genre', None) and self.genre['id'] == id:
+            return self.genre
+        result = self.request(self.genres_url, params={'id': id})
+        genre = result.get(id)
+        self.get_charts(genre)  # preload
+        return genre
+
+    def get_charts(self, genre):
+        if not genre:
+            return None
+        if '_charts' in genre:
+            charts = genre['_charts']
+            expired = time.time() - 60  # config
+            if charts['_updated'] > expired:
+                return charts.get('results', [])
+            else:
+                logger.debug('iTunes charts cache expired: %s', genre)
+        result = self.request(self.charts_url, params={
+            'g': genre['id'],
+            'cc': self.config['country'],
+            'name': CHARTS_NAME,
+            'limit': BROWSE_LIMIT
+        })
+        charts = self.request(self.lookup_url, params={
+            'id': ','.join(str(id) for id in result.get('resultIds', []))
+        })
+        charts['_updated'] = time.time()
+        genre['_charts'] = charts
+        return charts.get('results', [])
+
+    def request(self, url, params=None):
+        timeout = self.config['timeout']
+        response = self.session.get(url, params=params, timeout=timeout)
+        return response.json()
