@@ -10,15 +10,16 @@ import time
 
 from urlparse import urljoin
 
-from mopidy_podcast.directory import PodcastDirectory
+from mopidy_podcast.directory import PodcastDirectoryProvider
 from mopidy_podcast.models import Ref
 
 ATTRIBUTES = {
-    PodcastDirectory.AUTHOR: 'authorTerm',
-    PodcastDirectory.CATEGORY: None,  # TODO
-    PodcastDirectory.DESCRIPTION: 'descriptionTerm',
-    PodcastDirectory.KEYWORDS: 'keywordsTerm',
-    PodcastDirectory.TITLE: 'titleTerm',
+    None: None,
+    PodcastDirectoryProvider.AUTHOR: 'authorTerm',
+    PodcastDirectoryProvider.CATEGORY: None,  # TODO
+    PodcastDirectoryProvider.DESCRIPTION: 'descriptionTerm',
+    PodcastDirectoryProvider.KEYWORDS: 'keywordsTerm',
+    PodcastDirectoryProvider.TITLE: 'titleTerm',
 }
 
 CHARTS_PATH = '/WebObjects/MZStoreServices.woa/ws/charts'
@@ -42,7 +43,7 @@ def _to_refs(results):
     return refs
 
 
-class iTunesDirectory(PodcastDirectory):
+class iTunesDirectory(PodcastDirectoryProvider):
 
     name = 'itunes'
 
@@ -66,6 +67,7 @@ class iTunesDirectory(PodcastDirectory):
         return self.backend.config['podcast-itunes']
 
     def browse(self, path):
+        logger.info('iTunes: %s', path)
         if not self.genres:
             self.genres = self.get_genres(self.config['root_genre_id'])
         genre = self.genres
@@ -78,12 +80,12 @@ class iTunesDirectory(PodcastDirectory):
                 logger.warn('Invalid iTunes genre ID: %s', id)
         refs = _to_refs(self.get_charts(genre))
         for id, node in genre.get('subgenres', {}).items():
-            uri = path + '/' + id
+            uri = path.rstrip('/') + '/' + id
             ref = Ref.directory(uri=uri, name=node['name'])
             refs.append(ref)
         return refs
 
-    def search(self, terms=None, attribute=None):
+    def search(self, terms=None, attribute=None, limit=None):
         if not terms:
             return []
         result = self.request(self.search_url, params={
@@ -91,8 +93,8 @@ class iTunesDirectory(PodcastDirectory):
             'country': self.config['country'],
             'media': 'podcast',
             'entity': 'podcast',
-            'attribute': ATTRIBUTES[attribute] if attribute else None,
-            'limit': self.config['limit'],
+            'attribute': ATTRIBUTES[attribute],
+            'limit': self.config['search_limit'],
             'explicit': self.config['explicit']
         })
         return _to_refs(result.get('results', []))
