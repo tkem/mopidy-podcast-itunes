@@ -17,7 +17,7 @@ setup(
     license='Apache License, Version 2.0',
     author='Thomas Kemmer',
     author_email='tkemmer@computer.org',
-    description='Mopidy-Podcast extension for searching and browsing Podcasts on the iTunes Store',  # noqa
+    description='Mopidy-Podcast extension for searching and browsing podcasts on the iTunes Store',  # noqa
     long_description=open('README.rst').read(),
     packages=find_packages(exclude=['tests', 'tests.*']),
     zip_safe=False,
