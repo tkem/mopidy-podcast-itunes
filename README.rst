@@ -20,8 +20,14 @@ Mopidy-Podcast-iTunes releases_.
 Configuration
 ------------------------------------------------------------------------
 
-Configuration items are still subject to change at this point, so be
-warned::
+To enable Mopidy-Podcast-iTunes, add ``itunes`` to the list
+of configured ``directories`` in the ``[podcast]`` section::
+
+    [podcast]
+    directories = feeds, itunes
+
+Other configuration items are still subject to change at this point, so be
+warned before trying any of these::
 
     [podcast]
     directories = feeds, itunes
