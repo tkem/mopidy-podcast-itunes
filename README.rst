@@ -23,6 +23,9 @@ Configuration
 Configuration items are still subject to change at this point, so be
 warned::
 
+    [podcast]
+    directories = feeds, itunes
+
     [podcast-itunes]
     enabled = true
 
