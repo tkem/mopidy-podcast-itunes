@@ -2,9 +2,9 @@ from __future__ import unicode_literals
 
 from mopidy import config, ext
 
-__version__ = '0.1.0'
+__version__ = '0.2.0'
 
-COUNTRIES = (
+_COUNTRIES = (
     'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR',
     'AS', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE',
     'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ',
@@ -32,9 +32,9 @@ COUNTRIES = (
     'VN', 'VU', 'WF', 'WS', 'YE', 'YT', 'ZA', 'ZM', 'ZW',
 )
 
-CHARTS = ('Podcasts', 'AudioPodcasts', 'VideoPodcasts')
+_CHARTS = ('Podcasts', 'AudioPodcasts', 'VideoPodcasts')
 
-BOOLEANS = ('Yes', 'No')  # config.Boolean has no "optional"
+_BOOLS = ('Yes', 'No')  # since config.Boolean has no "optional"
 
 
 class Extension(ext.Extension):
@@ -52,12 +52,18 @@ class Extension(ext.Extension):
         schema = super(Extension, self).get_config_schema()
         schema['display_name'] = config.String()
         schema['base_url'] = config.String()
-        schema['country'] = config.String(choices=COUNTRIES)
-        schema['browse_charts'] = config.String(choices=CHARTS)
-        schema['browse_limit'] = config.Integer(minimum=1, maximum=200)
-        schema['root_genre_id'] = config.Integer()
-        schema['explicit'] = config.String(optional=True, choices=BOOLEANS)
-        schema['timeout'] = config.Integer(optional=True)
+        schema['country'] = config.String(choices=_COUNTRIES)
+        schema['explicit'] = config.String(optional=True, choices=_BOOLS)
+        schema['charts'] = config.String(choices=_CHARTS)
+        schema['charts_label'] = config.String()
+        schema['root_genre_id'] = config.String()
+
+        # config values no longer needed
+        schema['browse_charts'] = config.Deprecated()
+        schema['browse_limit'] = config.Deprecated()
+        schema['charts_limit'] = config.Deprecated()
+        schema['timeout'] = config.Deprecated()
+
         return schema
 
     def setup(self, registry):

@@ -1,10 +1,10 @@
 from __future__ import unicode_literals
 
-import re
 from setuptools import setup, find_packages
 
 
 def get_version(filename):
+    import re
     content = open(filename).read()
     metadata = dict(re.findall("__([a-z]+)__ = '([^']+)'", content))
     return metadata['version']
@@ -25,7 +25,7 @@ setup(
     install_requires=[
         'setuptools',
         'Mopidy >= 0.18',
-        'Mopidy-Podcast >= 0.3.0',
+        'Mopidy-Podcast >= 0.4.0',
         'requests >= 2.0.0',
     ],
     test_suite='nose.collector',

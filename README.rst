@@ -17,55 +17,12 @@ You can also download and install Debian/Ubuntu packages for
 Mopidy-Podcast-iTunes releases_.
 
 
-Configuration
-------------------------------------------------------------------------
-
-To enable Mopidy-Podcast-iTunes, add ``itunes`` to the list
-of configured ``directories`` in the ``[podcast]`` section::
-
-    [podcast]
-    directories = feeds, itunes
-
-Other configuration items are still subject to change at this point, so be
-warned before trying any of these::
-
-    [podcast]
-    directories = feeds, itunes
-
-    [podcast-itunes]
-    enabled = true
-
-    # user-friendly name for browsing, etc.
-    display_name = iTunes Store
-
-    # iTunes Store base URL
-    base_url = http://itunes.apple.com/
-
-    # ISO country code for the store you want to search
-    country = US
-
-    # iTunes charts to return when browsing
-    browse_charts = AudioPodcasts
-
-    # number of charts results you want the iTunes Store to return
-    browse_limit = 20
-
-    # iTunes genre ID for browsing (26: Podcasts)
-    root_genre_id = 26
-
-    # whether you want to include explicit content in your search
-    # results; possible values: "Yes", "No", or default (blank)
-    explicit =
-
-    # optional http request timeout in seconds
-    timeout =
-
-
 Project Resources
 ------------------------------------------------------------------------
 
-- `Source Code`_
+- `Documentation`_
 - `Issue Tracker`_
+- `Source Code`_
 - `Change Log`_
 - `Development Snapshot`_
 
@@ -81,7 +38,7 @@ Project Resources
 License
 ------------------------------------------------------------------------
 
-Mopidy-Podcast-iTunes is Copyright 2014 Thomas Kemmer.
+Copyright (c) 2014 Thomas Kemmer.
 
 Licensed under the `Apache License, Version 2.0`_.
 
@@ -89,8 +46,9 @@ Licensed under the `Apache License, Version 2.0`_.
 .. _Mopidy-Podcast: https://github.com/tkem/mopidy-podcast
 .. _iTunes Store: https://itunes.apple.com/genre/podcasts/id26
 .. _releases: https://github.com/tkem/mopidy-podcast-itunes/releases
+.. _Documentation: http://mopidy-podcast.readthedocs.org/en/latest/ext/itunes.html
 .. _Source Code: https://github.com/tkem/mopidy-podcast-itunes
 .. _Issue Tracker: https://github.com/tkem/mopidy-podcast-itunes/issues/
-.. _Change Log: https://github.com/tkem/mopidy-podcast-itunes/blob/master/Changes
+.. _Change Log: https://raw.github.com/tkem/mopidy-podcast-itunes/master/Changes
 .. _Development Snapshot: https://github.com/tkem/mopidy-podcast-itunes/tarball/master#egg=Mopidy-Podcast-iTunes-dev
 .. _Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
