@@ -8,10 +8,14 @@ browsing podcasts on the `iTunes Store`_.
 Installation
 ------------------------------------------------------------------------
 
-Like other Mopidy extensions, Mopidy-Podcast-iTunes can be installed
-using pip by running::
+First, make sure you have Mopidy-Podcast version 0.4.0 or later
+installed.  Then Mopidy-Podcast-iTunes can be installed using pip by
+running::
 
     pip install Mopidy-Podcast-iTunes
+
+After a restart, Mopidy-Podcast will pick up the installed extension
+automatically and use it for browsing and searching.
 
 You can also download and install Debian/Ubuntu packages for
 Mopidy-Podcast-iTunes releases_.
