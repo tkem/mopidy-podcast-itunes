@@ -74,8 +74,8 @@ class iTunesDirectory(PodcastDirectory):
         refs.extend(_wrap_genre(item, uri) for item in subgenres.values())
         return refs
 
-    def search(self, terms=None, attribute=None, type=None, limit=None):
-        if not terms or attribute not in _ATTRIBUTES:
+    def search(self, terms, attr=None, type=None, uri=None, limit=None):
+        if not terms or attr not in _ATTRIBUTES:
             return None
         if type == Ref.EPISODE:
             return None
@@ -84,7 +84,7 @@ class iTunesDirectory(PodcastDirectory):
             'country': self.config['country'],
             'media': 'podcast',
             'entity': 'podcast',
-            'attribute': _ATTRIBUTES[attribute],
+            'attribute': _ATTRIBUTES[attr],
             'limit': min(limit, _SEARCH_LIMIT) if limit else None,
             'explicit': self.config['explicit']
         })
