@@ -57,12 +57,12 @@ class Extension(ext.Extension):
         schema['charts'] = config.String(choices=_CHARTS)
         schema['charts_label'] = config.String()
         schema['root_genre_id'] = config.String()
+        schema['timeout'] = config.Integer(optional=True, minimum=1)
 
         # config values no longer needed
         schema['browse_charts'] = config.Deprecated()
         schema['browse_limit'] = config.Deprecated()
         schema['charts_limit'] = config.Deprecated()
-        schema['timeout'] = config.Deprecated()
 
         return schema
 
