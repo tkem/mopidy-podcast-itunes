@@ -24,19 +24,19 @@ Mopidy-Podcast-iTunes releases_.
 Project Resources
 ------------------------------------------------------------------------
 
+.. image:: http://img.shields.io/pypi/v/Mopidy-Podcast-iTunes.svg
+    :target: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
+    :alt: Latest PyPI version
+
+.. image:: http://img.shields.io/pypi/dm/Mopidy-Podcast-iTunes.svg
+    :target: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
+    :alt: Number of PyPI downloads
+
 - `Documentation`_
 - `Issue Tracker`_
 - `Source Code`_
 - `Change Log`_
 - `Development Snapshot`_
-
-.. image:: https://pypip.in/v/Mopidy-Podcast-iTunes/badge.png
-    :target: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
-    :alt: Latest PyPI version
-
-.. image:: https://pypip.in/d/Mopidy-Podcast-iTunes/badge.png
-    :target: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
-    :alt: Number of PyPI downloads
 
 
 License

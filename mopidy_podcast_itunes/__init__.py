@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from mopidy import config, ext
 
-__version__ = '0.2.0'
+__version__ = '0.3.0'
 
 _COUNTRIES = (
     'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR',
@@ -50,19 +50,20 @@ class Extension(ext.Extension):
 
     def get_config_schema(self):
         schema = super(Extension, self).get_config_schema()
-        schema['display_name'] = config.String()
         schema['base_url'] = config.String()
+        schema['name'] = config.String()
         schema['country'] = config.String(choices=_COUNTRIES)
         schema['explicit'] = config.String(optional=True, choices=_BOOLS)
         schema['charts'] = config.String(choices=_CHARTS)
         schema['charts_label'] = config.String()
-        schema['root_genre_id'] = config.String()
         schema['timeout'] = config.Integer(optional=True, minimum=1)
 
         # config values no longer needed
+        schema['display_name'] = config.Deprecated()
         schema['browse_charts'] = config.Deprecated()
         schema['browse_limit'] = config.Deprecated()
         schema['charts_limit'] = config.Deprecated()
+        schema['root_genre_id'] = config.Deprecated()
 
         return schema
 

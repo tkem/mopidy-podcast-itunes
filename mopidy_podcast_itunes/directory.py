@@ -29,13 +29,13 @@ _CHARTS_LIMIT = _SEARCH_LIMIT = 200
 logger = logging.getLogger(__name__)
 
 
-def _podcast_ref(item):
+def _to_podcast_ref(item):
     uri, _ = urlparse.urldefrag(item.get('feedUrl'))
     return Ref.podcast(uri=uri, name=item.get('trackName'))
 
 
-def _genre_ref(item, base):
-    uri = urlparse.urljoin(base, item.get('id') + '/')
+def _to_genre_ref(item):
+    uri = item.get('id') + '/'
     return Ref.directory(uri=uri, name=item.get('name'))
 
 
@@ -43,15 +43,20 @@ class iTunesDirectory(PodcastDirectory):
 
     name = 'itunes'
 
-    _root_genre = None
+    _root_genre = {}
+
+    _root_genre_id = '26'  # Podcasts
 
     def __init__(self, config):
         super(iTunesDirectory, self).__init__(config)
-        self.config = config[Extension.ext_name]
-        self.timeout = self.config['timeout']
-        self.display_name = self.config['display_name']
+        self.root_name = config[Extension.ext_name]['name']
+        self._charts = config[Extension.ext_name]['charts']
+        self._charts_label = config[Extension.ext_name]['charts_label']
+        self._country = config[Extension.ext_name]['country']
+        self._explicit = config[Extension.ext_name]['explicit']
+        self._timeout = config[Extension.ext_name]['timeout']
 
-        base_url = self.config['base_url']
+        base_url = config[Extension.ext_name]['base_url']
         self._charts_url = urlparse.urljoin(base_url, _CHARTS_PATH)
         self._genres_url = urlparse.urljoin(base_url, _GENRES_PATH)
         self._lookup_url = urlparse.urljoin(base_url, _LOOKUP_PATH)
@@ -59,21 +64,20 @@ class iTunesDirectory(PodcastDirectory):
         self._session = requests.Session()
 
     def browse(self, uri, limit=None):
-        genre, charts = self._genres(), None
+        genre = self._root_genre
+        subgenres = {}
+        charts = None
         for p in uri.split('/'):
-            if p.isdigit():
-                genre = genre['subgenres'][p]
+            subgenres = genre.get('subgenres', {})
+            if p in subgenres:
+                genre = subgenres[p]
             else:
                 charts = p
-        if charts or 'subgenres' not in genre:
-            return map(_podcast_ref, self._charts(genre, limit))
-        subgenres = genre.get('subgenres', {})
-        charts_uri = urlparse.urljoin(uri, 'charts')
-        charts_label = self.config['charts_label'].format(
-            genre.get('name'), genre.get('id')
-        )
-        refs = [Ref.directory(uri=charts_uri, name=charts_label)]
-        refs.extend(_genre_ref(item, uri) for item in subgenres.values())
+        if charts or not subgenres:
+            return map(_to_podcast_ref, self._get_charts(genre, charts, limit))
+        charts_name = self._charts_label.format(genre.get('name'))
+        refs = [Ref.directory(uri=self._charts, name=charts_name)]
+        refs.extend(map(_to_genre_ref, subgenres.values()))
         return refs
 
     def search(self, uri, terms, attr=None, type=None, limit=None):
@@ -83,33 +87,28 @@ class iTunesDirectory(PodcastDirectory):
             return None
         result = self._request(self._search_url, params={
             'term': ' '.join(terms),  # plus-escaped by requests
-            'country': self.config['country'],
+            'country': self._country,
             'media': 'podcast',
             'entity': 'podcast',
             'attribute': _ATTRIBUTE_MAPPING[attr],
             'limit': min(limit, _SEARCH_LIMIT) if limit else None,
-            'explicit': self.config['explicit']
+            'explicit': self._explicit
         })
-        return [_podcast_ref(item) for item in result.get('results', [])]
+        return map(_to_podcast_ref, result.get('results', []))
 
-    def update(self):
+    def refresh(self, uri=None):
         result = self._request(self._genres_url, params={
-            'id': self.config['root_genre_id'],
-            'cc': self.config['country']
+            'id': self._root_genre_id,
+            'cc': self._country
         })
-        self._root_genre = result.get(self.config['root_genre_id'])
+        self._root_genre = result.get(self._root_genre_id)
 
-    def _genres(self):
-        if not self._root_genre:
-            self.refresh()
-        return self._root_genre
-
-    def _charts(self, genre, limit=None):
+    def _get_charts(self, genre, charts=None, limit=None):
         if '_charts' not in genre or genre['_charts']['_limit'] < limit:
             result = self._request(self._charts_url, params={
                 'g': genre['id'],
-                'cc': self.config['country'],
-                'name': self.config['charts'],
+                'cc': self._country,
+                'name': charts or self._charts,
                 'limit': min(limit, _CHARTS_LIMIT) if limit else None
             })
             charts = self._request(self._lookup_url, params={
@@ -120,7 +119,7 @@ class iTunesDirectory(PodcastDirectory):
         return genre['_charts'].get('results', [])[:limit]
 
     def _request(self, url, params=None):
-        response = self._session.get(url, params=params, timeout=self.timeout)
+        response = self._session.get(url, params=params, timeout=self._timeout)
         response.raise_for_status()
         logger.debug('Retrieving %s took %s', response.url, response.elapsed)
         return response.json()
