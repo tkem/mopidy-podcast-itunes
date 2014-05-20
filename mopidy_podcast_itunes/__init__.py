@@ -54,14 +54,20 @@ class Extension(ext.Extension):
         schema['name'] = config.String()
         schema['country'] = config.String(choices=_COUNTRIES)
         schema['explicit'] = config.String(optional=True, choices=_BOOLS)
+
+        schema['charts_name'] = config.String()
+        schema['genre_name'] = config.String()
+        schema['podcast_name'] = config.String()
+        schema['episode_name'] = config.String()
+
         schema['charts'] = config.String(choices=_CHARTS)
-        schema['charts_label'] = config.String()
         schema['timeout'] = config.Integer(optional=True, minimum=1)
 
         # config values no longer needed
         schema['display_name'] = config.Deprecated()
         schema['browse_charts'] = config.Deprecated()
         schema['browse_limit'] = config.Deprecated()
+        schema['charts_label'] = config.Deprecated()
         schema['charts_limit'] = config.Deprecated()
         schema['root_genre_id'] = config.Deprecated()
 

@@ -18,6 +18,12 @@ _ATTRIBUTE_MAPPING = {
     'keywords': 'keywordsTerm'
 }
 
+_ENTITY_MAPPING = {
+    None: 'podcast,podcastEpisode',
+    Ref.PODCAST: 'podcast',
+    Ref.EPISODE: 'podcastEpisode'
+}
+
 _CHARTS_PATH = '/WebObjects/MZStoreServices.woa/ws/charts'
 _GENRES_PATH = '/WebObjects/MZStoreServices.woa/ws/genres'
 _LOOKUP_PATH = '/lookup'
@@ -27,16 +33,6 @@ _SEARCH_PATH = '/search'
 _CHARTS_LIMIT = _SEARCH_LIMIT = 200
 
 logger = logging.getLogger(__name__)
-
-
-def _to_podcast_ref(item):
-    uri, _ = urlparse.urldefrag(item.get('feedUrl'))
-    return Ref.podcast(uri=uri, name=item.get('trackName'))
-
-
-def _to_genre_ref(item):
-    uri = item.get('id') + '/'
-    return Ref.directory(uri=uri, name=item.get('name'))
 
 
 class iTunesDirectory(PodcastDirectory):
@@ -49,14 +45,20 @@ class iTunesDirectory(PodcastDirectory):
 
     def __init__(self, config):
         super(iTunesDirectory, self).__init__(config)
-        self.root_name = config[Extension.ext_name]['name']
-        self._charts = config[Extension.ext_name]['charts']
-        self._charts_label = config[Extension.ext_name]['charts_label']
-        self._country = config[Extension.ext_name]['country']
-        self._explicit = config[Extension.ext_name]['explicit']
-        self._timeout = config[Extension.ext_name]['timeout']
+        config = config[Extension.ext_name]
 
-        base_url = config[Extension.ext_name]['base_url']
+        self.root_name = config['name']
+        self._charts = config['charts']
+        self._country = config['country']
+        self._explicit = config['explicit']
+        self._timeout = config['timeout']
+
+        self._genre_name = config['genre_name']
+        self._charts_name = config['charts_name']
+        self._podcast_name = config['podcast_name']
+        self._episode_name = config['episode_name']
+
+        base_url = config['base_url']
         self._charts_url = urlparse.urljoin(base_url, _CHARTS_PATH)
         self._genres_url = urlparse.urljoin(base_url, _GENRES_PATH)
         self._lookup_url = urlparse.urljoin(base_url, _LOOKUP_PATH)
@@ -64,9 +66,7 @@ class iTunesDirectory(PodcastDirectory):
         self._session = requests.Session()
 
     def browse(self, uri, limit=None):
-        genre = self._root_genre
-        subgenres = {}
-        charts = None
+        genre, subgenres, charts = self._root_genre, {}, None
         for p in uri.split('/'):
             subgenres = genre.get('subgenres', {})
             if p in subgenres:
@@ -74,27 +74,27 @@ class iTunesDirectory(PodcastDirectory):
             else:
                 charts = p
         if charts or not subgenres:
-            return map(_to_podcast_ref, self._get_charts(genre, charts, limit))
-        charts_name = self._charts_label.format(genre.get('name'))
+            return map(self._ref, self._get_charts(genre, charts, limit))
+        charts_name = self._charts_name.format(**genre)
         refs = [Ref.directory(uri=self._charts, name=charts_name)]
-        refs.extend(map(_to_genre_ref, subgenres.values()))
+        refs.extend(map(self._ref, subgenres.values()))
         return refs
 
     def search(self, uri, terms, attr=None, type=None, limit=None):
         if not terms or attr not in _ATTRIBUTE_MAPPING:
             return None
-        if type == Ref.EPISODE:
-            return None
+        g = uri.rsplit('/', 2)[1] if uri else None
         result = self._request(self._search_url, params={
             'term': ' '.join(terms),  # plus-escaped by requests
             'country': self._country,
             'media': 'podcast',
-            'entity': 'podcast',
+            'entity': _ENTITY_MAPPING[type],
             'attribute': _ATTRIBUTE_MAPPING[attr],
-            'limit': min(limit, _SEARCH_LIMIT) if limit else None,
-            'explicit': self._explicit
+            'limit': min(limit, _SEARCH_LIMIT) if limit else _SEARCH_LIMIT,
+            'explicit': self._explicit,
+            'g': g or None  # undocumented
         })
-        return map(_to_podcast_ref, result.get('results', []))
+        return map(self._ref, result.get('results', []))
 
     def refresh(self, uri=None):
         result = self._request(self._genres_url, params={
@@ -123,3 +123,17 @@ class iTunesDirectory(PodcastDirectory):
         response.raise_for_status()
         logger.debug('Retrieving %s took %s', response.url, response.elapsed)
         return response.json()
+
+    def _ref(self, item):
+        if 'episodeUrl' in item:
+            uri = urlparse.urljoin(item['feedUrl'], '#' + item['episodeUrl'])
+            name = self._episode_name.format(**item)
+            return Ref.episode(uri=uri, name=name)
+        elif 'feedUrl' in item:
+            uri, _ = urlparse.urldefrag(item['feedUrl'])
+            name = self._podcast_name.format(**item)
+            return Ref.podcast(uri=uri, name=name)
+        else:
+            uri = item['id'] + '/'
+            name = self._genre_name.format(**item)
+            return Ref.directory(uri=uri, name=name)
