@@ -25,7 +25,7 @@ setup(
     install_requires=[
         'setuptools',
         'Mopidy >= 0.18',
-        'Mopidy-Podcast >= 0.4.0',
+        'Mopidy-Podcast >= 1.0.0',
         'requests >= 2.0.0',
     ],
     test_suite='nose.collector',

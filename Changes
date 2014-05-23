@@ -1,5 +1,13 @@
 Revision history for Mopidy-Podcast-iTunes
 
+1.0.0   2014-05-24
+
+        - Upgrade to Mopidy-Podcast v1.0.0 directory API.
+
+        - Add support for undocumented search attributes.
+
+        - Support custom formatting of search/browse results.
+
 0.2.0   2014-04-11
 
         - Upgrade to Mopidy-Podcast v0.4.0 directory API.
