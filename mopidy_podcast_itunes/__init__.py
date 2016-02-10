@@ -1,10 +1,14 @@
 from __future__ import unicode_literals
 
-from mopidy import config, ext
+import os
 
-__version__ = '1.0.0'
+from mopidy import config, ext, httpclient
 
-_COUNTRIES = (
+__version__ = '1.1.0'
+
+CHARTS = ['podcasts', 'audioPodcasts', 'videoPodcasts']
+
+COUNTRIES = [
     'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR',
     'AS', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE',
     'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ',
@@ -29,12 +33,12 @@ _COUNTRIES = (
     'SX', 'SY', 'SZ', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK',
     'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA',
     'UG', 'UM', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VI',
-    'VN', 'VU', 'WF', 'WS', 'YE', 'YT', 'ZA', 'ZM', 'ZW',
-)
+    'VN', 'VU', 'WF', 'WS', 'YE', 'YT', 'ZA', 'ZM', 'ZW'
+]
 
-_CHARTS = ('Podcasts', 'AudioPodcasts', 'VideoPodcasts')
+EXPLICIT = ('Yes', 'No')  # since config.Boolean has no "optional"
 
-_BOOLS = ('Yes', 'No')  # since config.Boolean has no "optional"
+LIMIT = 200  # absolute limit specified by iTunes Store API
 
 
 class Extension(ext.Extension):
@@ -44,31 +48,37 @@ class Extension(ext.Extension):
     version = __version__
 
     def get_default_config(self):
-        import os
-        conf_file = os.path.join(os.path.dirname(__file__), 'ext.conf')
-        return config.read(conf_file)
+        return config.read(os.path.join(os.path.dirname(__file__), 'ext.conf'))
 
     def get_config_schema(self):
         schema = super(Extension, self).get_config_schema()
         schema['base_url'] = config.String()
-        schema['root_name'] = config.String()
-        schema['genre_format'] = config.String()
-        schema['charts_format'] = config.String()
-        schema['podcast_format'] = config.String()
-        schema['episode_format'] = config.String()
-        schema['charts'] = config.String(choices=_CHARTS)
-        schema['country'] = config.String(choices=_COUNTRIES)
-        schema['explicit'] = config.String(optional=True, choices=_BOOLS)
+        schema['country'] = config.String(choices=COUNTRIES)
+        schema['explicit'] = config.String(optional=True, choices=EXPLICIT)
+        schema['charts_type'] = config.String(choices=CHARTS)
+        schema['charts_limit'] = config.Integer(minimum=1, maximum=LIMIT)
+        schema['search_limit'] = config.Integer(minimum=1, maximum=LIMIT)
+        schema['root_genre_id'] = config.String()
         schema['timeout'] = config.Integer(optional=True, minimum=1)
-        # no longer used/needed
-        schema['display_name'] = config.Deprecated()
-        schema['browse_charts'] = config.Deprecated()
-        schema['browse_limit'] = config.Deprecated()
-        schema['charts_label'] = config.Deprecated()
-        schema['charts_limit'] = config.Deprecated()
-        schema['root_genre_id'] = config.Deprecated()
+        # no longer used
+        schema['charts'] = config.Deprecated()  # chartUrls use different names
+        schema['charts_format'] = config.Deprecated()
+        schema['episode_format'] = config.Deprecated()
+        schema['genre_format'] = config.Deprecated()
+        schema['podcast_format'] = config.Deprecated()
+        schema['root_name'] = config.Deprecated()
         return schema
 
     def setup(self, registry):
-        from .directory import iTunesDirectory
-        registry.add('podcast:directory', iTunesDirectory)
+        from .backend import iTunesPodcastBackend
+        registry.add('backend', iTunesPodcastBackend)
+
+    @classmethod
+    def get_requests_session(cls, config):
+        import requests
+        session = requests.Session()
+        proxy = httpclient.format_proxy(config['proxy'])
+        session.proxies.update({'http': proxy, 'https': proxy})
+        name = '%s/%s' % (cls.dist_name, cls.version)
+        session.headers['User-Agent'] = httpclient.format_user_agent(name)
+        return session

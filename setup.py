@@ -1,12 +1,12 @@
 from __future__ import unicode_literals
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 
 def get_version(filename):
-    import re
-    content = open(filename).read()
-    metadata = dict(re.findall("__([a-z]+)__ = '([^']+)'", content))
+    from re import findall
+    with open(filename) as fh:
+        metadata = dict(findall("__([a-z]+)__ = '([^']+)'", fh.read()))
     return metadata['version']
 
 
@@ -17,21 +17,21 @@ setup(
     license='Apache License, Version 2.0',
     author='Thomas Kemmer',
     author_email='tkemmer@computer.org',
-    description='Mopidy-Podcast extension for searching and browsing podcasts on the iTunes Store',  # noqa
+    description=(
+        'Mopidy extension for searching and browsing podcasts '
+        'on the Apple iTunes Store'
+    ),
     long_description=open('README.rst').read(),
     packages=find_packages(exclude=['tests', 'tests.*']),
     zip_safe=False,
     include_package_data=True,
     install_requires=[
         'setuptools',
-        'Mopidy >= 0.18',
-        'Mopidy-Podcast >= 1.0.0',
+        'Mopidy >= 1.1',
+        'Mopidy-Podcast >= 1.0',
+        'Pykka >= 1.1',
         'requests >= 2.0.0',
-    ],
-    test_suite='nose.collector',
-    tests_require=[
-        'nose',
-        'mock >= 1.0',
+        'uritools >= 1.0'
     ],
     entry_points={
         'mopidy.ext': [

@@ -1,8 +1,8 @@
-include .coveragerc
-include Changes
+include CHANGES.rst
 include LICENSE
 include MANIFEST.in
 include README.rst
 include mopidy_podcast_itunes/ext.conf
+include tox.ini
 
 recursive-include tests *.py

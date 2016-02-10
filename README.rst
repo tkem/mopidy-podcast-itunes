@@ -2,106 +2,83 @@ Mopidy-Podcast-iTunes
 ========================================================================
 
 Mopidy-Podcast-iTunes is a Mopidy-Podcast_ extension for searching and
-browsing podcasts on the `Apple iTunes Store`_.
+browsing podcasts on the `Apple iTunes Store
+<https://itunes.apple.com/genre/podcasts/id26>`_.
 
 
 Installation
 ------------------------------------------------------------------------
 
-First, make sure you have Mopidy-Podcast version 1.0.0 or later
-installed.  Then Mopidy-Podcast-iTunes can be installed by running::
+On Debian Linux and Debian-based distributions like Ubuntu or
+Raspbian, please install the ``mopidy-podcast-itunes`` package from
+apt.mopidy.com_::
 
-    pip install Mopidy-Podcast-iTunes
+  apt-get install mopidy-podcast-itunes
 
-After a restart, Mopidy-Podcast will pick up the installed extension
-automatically.
+Otherwise, install the package from PyPI_::
 
-You can also install Debian/Ubuntu packages from the `APT repository`_::
-
-    wget -q -O - http://apt.kemmer.co.at/tkem.gpg | sudo apt-key add -
-    sudo wget -q -O /etc/apt/sources.list.d/tkem.list http://apt.kemmer.co.at/tkem.list
-    sudo apt-get update
-    sudo apt-get install mopidy-podcast-itunes
+  pip install Mopidy-Podcast-iTunes
 
 
 Configuration
 ------------------------------------------------------------------------
 
-The default configuration contains everything to get you up and
-running, and will usually require only a few modifications to match
-personal preferences::
+The following configuration values are available:
 
-    [podcast-itunes]
-    enabled = true
+- ``podcast-itunes/enabled``: Whether this extension should be enabled
+  or not.  Defaults to ``true``.
 
-    # iTunes Store base URL
-    base_url = http://itunes.apple.com/
+- ``podcast-itunes/base_url``: The base URL for the iTunes Store.
+  Defaults to ``http://itunes.apple.com/``.
 
-    # user-friendly name for browsing the iTunes Store
-    root_name = iTunes Store
+- ``podcast-itunes/country``: The ISO country code for the iTunes
+  Store you want to connect to.  Defaults to ``US``.
 
-    # format string for genre results; field names: id, name, url
-    genre_format = {name}
+- ``podcast-itunes/root_genre_id``: The iTunes Store genre ID used as
+  the root for browsing.  Defaults to ``26``, which is "Podcasts".
 
-    # format string for podcast results; field names: collectionId,
-    # collectionName, country, kind, trackCount
-    podcast_format = {collectionName}
-
-    # format string for episode results; field names: collectionId,
-    # collectionName, country, episodeContentType, episodeFileExtension,
-    # episodeGuid, kind, releaseDate, trackId, trackName
-    episode_format = {trackName} [{collectionName}]
-
-    # charts to display when browsing; possible values: "Podcasts",
-    # "AudioPodcasts", "VideoPodcasts"
-    charts = AudioPodcasts
-
-    # directory name to display for browsing charts of a genre/category
-    # with subgenres; field names as for 'genre_format'
-    charts_format = All {name}
-
-    # ISO country code for the iTunes Store you want to use
-    country = US
-
-    # whether you want to include explicit content in your search
-    # results; possible values: "Yes", "No", or store default (blank)
-    explicit =
-
-    # HTTP request timeout in seconds
-    timeout = 10
+- ``podcast-itunes/timeout``: The HTTP request timeout in seconds when
+  connecting to the iTunes Store.  Defaults to ``10``.
 
 
 Project Resources
 ------------------------------------------------------------------------
 
-.. image:: http://img.shields.io/pypi/v/Mopidy-Podcast-iTunes.svg
+.. image:: https://img.shields.io/pypi/v/Mopidy-Podcast-iTunes.svg?style=flat
     :target: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
     :alt: Latest PyPI version
 
-.. image:: http://img.shields.io/pypi/dm/Mopidy-Podcast-iTunes.svg
+.. image:: https://img.shields.io/pypi/dm/Mopidy-Podcast-iTunes.svg?style=flat
     :target: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
     :alt: Number of PyPI downloads
+
+.. image:: https://img.shields.io/travis/tkem/mopidy-podcast-itunes/master.svg?style=flat
+    :target: https://travis-ci.org/tkem/mopidy-podcast-itunes
+    :alt: Travis CI build status
+
+.. image:: https://img.shields.io/coveralls/tkem/mopidy-podcast-itunes/master.svg?style=flat
+   :target: https://coveralls.io/r/tkem/mopidy-podcast-itunes?branch=master
+   :alt: Test coverage
 
 - `Issue Tracker`_
 - `Source Code`_
 - `Change Log`_
-- `Development Snapshot`_
 
 
 License
 ------------------------------------------------------------------------
 
-Copyright (c) 2014 Thomas Kemmer.
+Copyright (c) 2014-2016 Thomas Kemmer.
 
 Licensed under the `Apache License, Version 2.0`_.
 
 
 .. _Mopidy-Podcast: https://github.com/tkem/mopidy-podcast
-.. _Apple iTunes Store: https://itunes.apple.com/genre/podcasts/id26
-.. _APT repository: http://apt.kemmer.co.at/
+
+.. _apt.mopidy.com: http://apt.mopidy.com/>
+.. _PyPI: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
 .. _Issue Tracker: https://github.com/tkem/mopidy-podcast-itunes/issues/
-.. _Source Code: https://github.com/tkem/mopidy-podcast-itunes
-.. _Change Log: https://raw.github.com/tkem/mopidy-podcast-itunes/master/Changes
-.. _Development Snapshot: https://github.com/tkem/mopidy-podcast-itunes/tarball/master#egg=Mopidy-Podcast-iTunes-dev
+.. _Source Code: https://github.com/tkem/mopidy-podcast-itunes/
+.. _Change Log: https://github.com/tkem/mopidy-podcast-itunes/blob/master/CHANGES.rst
 
 .. _Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0

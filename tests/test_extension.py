@@ -1,28 +1,21 @@
 from __future__ import unicode_literals
 
-import unittest
-
 from mopidy_podcast_itunes import Extension
 
 
-class ExtensionTest(unittest.TestCase):
+def test_get_default_config():
+    config = Extension().get_default_config()
+    assert '[' + Extension.ext_name + ']' in config
+    assert 'enabled = true' in config
 
-    def test_get_default_config(self):
-        ext = Extension()
-        config = ext.get_default_config()
-        self.assertIn('[podcast-itunes]', config)
-        self.assertIn('enabled = true', config)
 
-    def test_get_config_schema(self):
-        ext = Extension()
-        schema = ext.get_config_schema()
-        self.assertIn('base_url', schema)
-        self.assertIn('root_name', schema)
-        self.assertIn('genre_format', schema)
-        self.assertIn('podcast_format', schema)
-        self.assertIn('episode_format', schema)
-        self.assertIn('charts', schema)
-        self.assertIn('charts_format', schema)
-        self.assertIn('country', schema)
-        self.assertIn('explicit', schema)
-        self.assertIn('timeout', schema)
+def test_get_config_schema():
+    schema = Extension().get_config_schema()
+    assert 'base_url' in schema
+    assert 'country' in schema
+    assert 'explicit' in schema
+    assert 'charts_type' in schema
+    assert 'charts_limit' in schema
+    assert 'search_limit' in schema
+    assert 'root_genre_id' in schema
+    assert 'timeout' in schema
