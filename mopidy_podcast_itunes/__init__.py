@@ -4,7 +4,7 @@ import os
 
 from mopidy import config, ext, httpclient
 
-__version__ = '1.1.0'
+__version__ = '2.0.0'
 
 CHARTS = ['podcasts', 'audioPodcasts', 'videoPodcasts']
 
@@ -38,7 +38,7 @@ COUNTRIES = [
 
 EXPLICIT = ('Yes', 'No')  # since config.Boolean has no "optional"
 
-LIMIT = 200  # absolute limit specified by iTunes Store API
+MAX_LIMIT = 200  # absolute limit specified by iTunes Store API
 
 
 class Extension(ext.Extension):
@@ -55,17 +55,21 @@ class Extension(ext.Extension):
         schema['base_url'] = config.String()
         schema['country'] = config.String(choices=COUNTRIES)
         schema['explicit'] = config.String(optional=True, choices=EXPLICIT)
-        schema['charts_type'] = config.String(choices=CHARTS)
-        schema['charts_limit'] = config.Integer(minimum=1, maximum=LIMIT)
-        schema['search_limit'] = config.Integer(minimum=1, maximum=LIMIT)
-        schema['root_genre_id'] = config.String()
+        schema['charts'] = config.String(choices=CHARTS)
+        schema['charts_limit'] = config.Integer(
+            minimum=1, maximum=MAX_LIMIT, optional=True
+        )
+        schema['search_limit'] = config.Integer(
+            minimum=1, maximum=MAX_LIMIT, optional=True
+        )
+        schema['root_directory_name'] = config.String()
         schema['timeout'] = config.Integer(optional=True, minimum=1)
         # no longer used
-        schema['charts'] = config.Deprecated()  # chartUrls use different names
         schema['charts_format'] = config.Deprecated()
         schema['episode_format'] = config.Deprecated()
         schema['genre_format'] = config.Deprecated()
         schema['podcast_format'] = config.Deprecated()
+        schema['root_genre_id'] = config.Deprecated()
         schema['root_name'] = config.Deprecated()
         return schema
 
@@ -76,9 +80,12 @@ class Extension(ext.Extension):
     @classmethod
     def get_requests_session(cls, config):
         import requests
-        session = requests.Session()
+
         proxy = httpclient.format_proxy(config['proxy'])
+        user_agent_string = '%s/%s' % (cls.dist_name, cls.version)
+        user_agent = httpclient.format_user_agent(user_agent_string)
+
+        session = requests.Session()
         session.proxies.update({'http': proxy, 'https': proxy})
-        name = '%s/%s' % (cls.dist_name, cls.version)
-        session.headers['User-Agent'] = httpclient.format_user_agent(name)
+        session.headers.update({'user-agent': user_agent})
         return session

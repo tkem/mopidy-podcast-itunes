@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
-from mopidy_podcast_itunes import Extension
+import mock
+
+from mopidy_podcast_itunes import Extension, backend
 
 
 def test_get_default_config():
@@ -12,10 +14,16 @@ def test_get_default_config():
 def test_get_config_schema():
     schema = Extension().get_config_schema()
     assert 'base_url' in schema
+    assert 'root_directory_name' in schema
+    assert 'charts' in schema
     assert 'country' in schema
     assert 'explicit' in schema
-    assert 'charts_type' in schema
     assert 'charts_limit' in schema
     assert 'search_limit' in schema
-    assert 'root_genre_id' in schema
     assert 'timeout' in schema
+
+
+def test_setup():
+    registry = mock.Mock()
+    Extension().setup(registry)
+    registry.add.assert_called_with('backend', backend.iTunesPodcastBackend)

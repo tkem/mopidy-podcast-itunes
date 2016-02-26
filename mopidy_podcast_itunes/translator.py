@@ -4,15 +4,13 @@ from mopidy import models
 
 import uritools
 
+from . import Extension
+
 _MODELS = {
     'podcast': lambda item: models.Album(
         uri=uri(item['feedUrl']),
         name=item.get('collectionName', item['trackName']),
-        artists=(
-            [models.Artist(name=item['artistName'])]
-            if 'artistName' in item
-            else None
-        ),
+        artists=artists(item),
         date=(item.get('releaseDate', '').partition('T')[0] or None),
         num_tracks=item.get('trackCount')
      ),
@@ -23,29 +21,26 @@ _MODELS = {
             uri=uri(item['feedUrl']),
             name=item['collectionName']
         ),
-        artists=(
-            [models.Artist(name=item['artistName'])]
-            if 'artistName' in item
-            else None
-        ),
+        artists=artists(item),
         date=(item.get('releaseDate', '').partition('T')[0] or None),
+        genre=item.get('primaryGenreName'),
+        length=item.get('trackTimeMillis'),
         comment=item.get('description')
-     )
+    )
 }
-
 
 _REFS = {
     'podcast': lambda item: models.Ref.album(
-        name=item.get('collectionName', item['trackName']),
-        uri=uri(item['feedUrl'])
+        uri=uri(item['feedUrl']),
+        name=item.get('collectionName', item['trackName'])
      ),
     'podcast-episode': lambda item: models.Ref.track(
-        name=item['trackName'],
-        uri=uri(item['feedUrl'], item.get('episodeGuid'))
+        uri=uri(item['feedUrl'], item['episodeGuid']),
+        name=item['trackName']
      )
 }
 
-# TODO: 'authorTerm' and 'titleTerm' not working properly for podcastEpisode
+# FIXME: 'authorTerm' and 'titleTerm' not working properly for podcastEpisode
 _QUERY = {
     'track_name': ('podcastEpisode', 'titleTerm'),
     'any': ('podcast,podcastEpisode', None),
@@ -57,51 +52,61 @@ _QUERY = {
 }
 
 
-def model(result):
-    try:
-        translate = _MODELS[result['kind']]
-    except KeyError:
-        raise ValueError('Unsupported result type "%s"' % result.get('kind'))
+def artists(item):
+    if 'artistName' in item:
+        return [models.Artist(name=item['artistName'])]
     else:
-        return translate(result)
+        return None
 
 
-def query(query, uris, exact):
+def directory(type, g, name=None, scheme=Extension.ext_name.replace('-', '+')):
+    return models.Ref.directory(
+        uri=':'.join((scheme, type, g['id'])), name=(name or g['name'])
+    )
+
+
+def model(item):
+    try:
+        translate = _MODELS[item['kind']]
+    except KeyError:
+        raise TypeError('Unsupported result type "%s"' % item.get('kind'))
+    else:
+        return translate(item)
+
+
+def query(query, uris=[], exact=False):
     if exact:
         raise NotImplementedError('Exact queries not supported')
     try:
-        uri, = uris
-    except ValueError:
-        raise NotImplementedError('Multi-path queries not supported')
-    try:
         (key, values), = query.items()
     except ValueError:
-        raise NotImplementedError('Only single-key queries supported')
+        raise NotImplementedError('Multi-key queries not supported')
     try:
         entity, attribute = _QUERY[key]
     except KeyError:
         raise NotImplementedError('Search key "%s" not supported' % key)
     return {
-        'media': 'podcast',
         'term': ' '.join(values),
+        'media': 'podcast',
         'entity': entity,
         'attribute': attribute,
-        'genreId': uritools.urisplit(uri).path.rpartition('/')[2] or None
+        # FIXME: not quite working as expected...
+        # 'genre_id': ','.join(uri.rpartition(':')[2] for uri in uris) or None
     }
 
 
-def ref(result):
+def ref(item):
     try:
-        translate = _REFS[result['kind']]
+        translate = _REFS[item['kind']]
     except KeyError:
-        raise ValueError('Unsupported result type "%s"' % result.get('kind'))
+        raise ValueError('Unsupported result type "%s"' % item.get('kind'))
     else:
-        return translate(result)
+        return translate(item)
 
 
 def uri(feedurl, guid=None, safe=uritools.SUB_DELIMS+b':@/?'):
-    uri, _ = uritools.uridefrag('podcast+' + feedurl)
-    if guid is None:
-        return uri
-    else:
+    uri = uritools.uridefrag('podcast+' + feedurl).uri
+    if guid:
         return uri + '#' + uritools.uriencode(guid, safe=safe)
+    else:
+        return uri

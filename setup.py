@@ -30,8 +30,7 @@ setup(
         'Mopidy >= 1.1',
         'Mopidy-Podcast >= 2.0',
         'Pykka >= 1.1',
-        'requests >= 2.0.0',
-        'uritools >= 1.0'
+        'requests >= 2.0'
     ],
     entry_points={
         'mopidy.ext': [

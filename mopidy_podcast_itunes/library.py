@@ -5,79 +5,66 @@ import logging
 
 from mopidy import backend, models
 
-import uritools
-
 from . import Extension, translator
 
-GENRES_PATH = '/WebObjects/MZStoreServices.woa/ws/genres'
-LOOKUP_PATH = '/lookup'
-SEARCH_PATH = '/search'
+ROOT_GENRE_ID = '26'  # "Podcasts"
 
 logger = logging.getLogger(__name__)
 
 
 class iTunesPodcastLibraryProvider(backend.LibraryProvider):
 
-    root_directory = models.Ref.directory(
-        uri='podcast+itunes:', name='iTunes Podcasts'
-    )
-
     def __init__(self, config, backend):
         super(iTunesPodcastLibraryProvider, self).__init__(backend)
-        self.__session = Extension.get_requests_session(config)
+        self.__root_name = config[Extension.ext_name]['root_directory_name']
+        self.__charts_kwargs = {
+            'name': config[Extension.ext_name]['charts'],
+            'limit': config[Extension.ext_name]['charts_limit']
+        }
+        self.__search_kwargs = {
+            'limit': config[Extension.ext_name]['search_limit']
+        }
+        # FIXME: Apple's docs list this as "Yes" or "No", but
+        # apparently only lowercase will work
+        # self.__explicit = (ext_config['explicit'] or '').lower()
 
-        ext_config = config[Extension.ext_name]
-        self.__country = ext_config['country']
-        self.__explicit = ext_config['explicit']
-        self.__charts_type = ext_config['charts_type']
-        self.__charts_limit = ext_config['charts_limit']
-        self.__search_limit = ext_config['search_limit']
-        self.__root_genre_id = ext_config['root_genre_id']
-        self.__timeout = ext_config['timeout']
-
-        base_url = ext_config['base_url']
-        self.__genres_url = uritools.urijoin(base_url, GENRES_PATH)
-        self.__lookup_url = uritools.urijoin(base_url, LOOKUP_PATH)
-        self.__search_url = uritools.urijoin(base_url, SEARCH_PATH)
-
-        self.__root_genres = {}  # cached genre map
+    @property
+    def root_directory(self):
+        return models.Ref.directory(
+            name=self.__root_name,
+            uri='podcast+itunes:'
+        )
 
     def browse(self, uri):
-        if self.__root_genres:
-            g = self.__root_genres
+        if uri == self.root_directory.uri:
+            type, id = 'genre', ROOT_GENRE_ID
         else:
-            self.__root_genres = g = self.__genres(self.__root_genre_id)
-        for pseg in uritools.urisplit(uri).path.split('/')[1:]:
-            if not pseg:
-                g = dict(g, subgenres=None)
-            elif pseg in g.get('subgenres', {}):
-                g = g['subgenres'][pseg]
-            else:
-                logger.warning('Invalid %s URI %s', Extension.ext_name, uri)
-        if g.get('subgenres') is None:
-            return list(self.__charts(g))
+            _, type, id = uri.split(':')
+        if type == 'charts':
+            return self.__charts(id)
+        elif type == 'genre':
+            return self.__genre(id)
         else:
-            return list(self.__browse(uri + '/', g))
+            logger.error('Invalid browse URI: %s', uri)
 
     def refresh(self, uri=None):
-        self.__root_genres = {}
+        self.backend.client.refresh()
 
     def search(self, query=None, uris=None, exact=False):
+        # sanitize uris - remove duplicates, root directory
+        uris = frozenset(uris or []).difference([self.root_directory.uri])
         try:
-            query = translator.query(query or {}, uris or [], exact)
+            kwargs = translator.query(query or {}, uris, exact)
         except NotImplementedError as e:
-            logger.info('Not searching %s: %s', Extension.dist_name, e)
-            return None
-        search = self.__request(self.__search_url, params=dict(
-            query,
-            country=self.__country,
-            explicit=self.__explicit,
-            limit=self.__search_limit
-        ))
+            return None  # query not supported
+        except Exception as e:
+            logger.error('%s', e)
+        else:
+            kwargs.update(self.__search_kwargs)
         results = collections.defaultdict(list)
-        for result in search.get('results', []):
+        for item in self.backend.client.search(**kwargs):
             try:
-                model = translator.model(result)
+                model = translator.model(item)
             except Exception as e:
                 logger.error('Error converting iTunes search result: %s', e)
             else:
@@ -88,36 +75,23 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
             tracks=results[models.Track]
         )
 
-    def __browse(self, uri, g, key=lambda g: g['name'].lower()):
-        yield models.Ref.directory(uri=uri, name='Top '+g['name'])
-        for subg in sorted(g['subgenres'].values(), key=key):
-            yield models.Ref.directory(uri=uri+subg['id'], name=subg['name'])
-
-    def __charts(self, g):
-        charts = self.__request(g['chartUrls'][self.__charts_type], params={
-            # TODO: no "explicit" parameter for chartUrls?
-            'limit': self.__charts_limit
-        })
-        lookup = self.__request(self.__lookup_url, params={
-            'id': ','.join(map(str, charts.get('resultIds', [])))
-        })
-        for result in lookup.get('results', []):
+    def __charts(self, id):
+        refs = []
+        for item in self.backend.client.charts(id, **self.__charts_kwargs):
             try:
-                ref = translator.ref(result)
+                ref = translator.ref(item)
             except Exception as e:
-                logger.error('Error converting iTunes search result: %s', e)
+                logger.error('Error converting iTunes charts item: %s', e)
             else:
-                yield ref
+                refs.append(ref)
+        return refs
 
-    def __genres(self, id):
-        genres = self.__request(self.__genres_url, params={
-            'cc': self.__country,
-            'id': id
-        })
-        return genres.get(id, {})
-
-    def __request(self, url, **kwargs):
-        response = self.__session.get(url, timeout=self.__timeout, **kwargs)
-        response.raise_for_status()
-        logger.debug('Retrieving %s took %s', response.url, response.elapsed)
-        return response.json()
+    def __genre(self, id, key=lambda g: g['name'].lower()):
+        g = self.backend.client.genre(id)
+        refs = [translator.directory('charts', g, 'Top %s' % g['name'])]
+        for genre in sorted(g.get('subgenres', {}).values(), key=key):
+            if 'subgenres' in genre:
+                refs.append(translator.directory('genre', genre))
+            else:
+                refs.append(translator.directory('charts', genre))
+        return refs
