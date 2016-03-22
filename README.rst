@@ -31,32 +31,31 @@ The following configuration values are available:
 - ``podcast-itunes/base_url``: The base URL for the iTunes Store.
   Defaults to ``http://itunes.apple.com/``.
 
-- ``podcast-itunes/country``: The ISO country code for the store to be
-  used.  Defaults to ``US``.
-
 - ``podcast-itunes/root_directory_name``: The name of the Mopidy root
   directory for browsing the iTunes Store.  Defaults to ``iTunes
   Store: Top Podcasts``.
 
-- ``podcast-itunes/root_genre_id``: The iTunes Store genre ID used as
-  the root for browsing.  Defaults to ``26``, which is "Podcasts".
+- ``podcast-itunes/country``: The ISO country code for the store to be
+  used.  Defaults to ``US``.
 
 - ``podcast-itunes/explicit``: Whether search results should include
   explicit content.  Can be set to ``Yes``, ``No``, or left empty to
   use the store's default.
 
-- ``podcast-itunes/charts_type``: One of ``podcasts``,
-  ``audioPodcasts`` or ``videoPodcasts``.  Defaults to
-  ``audioPodcasts``.
+- ``podcast-itunes/charts``: One of ``podcasts``, ``audioPodcasts`` or
+  ``videoPodcasts``.  Defaults to ``audioPodcasts``.
 
 - ``podcast-itunes/charts_limit``: The maximum number of charts
-  results to retrieve.  Defaults to ``50``.
+  entries to retrieve.  Defaults to ``20``.
 
 - ``podcast-itunes/search_limit``: The maximum number of search
   results to retrieve.  Defaults to ``20``.
 
 - ``podcast-itunes/timeout``: The HTTP request timeout in seconds when
   connecting to the iTunes Store.  Defaults to ``10``.
+
+- ``podcast-itunes/retries``: The maximum number of HTTP connection
+  retries when connecting to the iTunes Store.  Defaults to ``3``.
 
 
 Project Resources

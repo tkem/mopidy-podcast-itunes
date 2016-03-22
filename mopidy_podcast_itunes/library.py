@@ -22,11 +22,9 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
             'limit': config[Extension.ext_name]['charts_limit']
         }
         self.__search_kwargs = {
+            'explicit': config[Extension.ext_name]['explicit'],
             'limit': config[Extension.ext_name]['search_limit']
         }
-        # FIXME: Apple's docs list this as "Yes" or "No", but
-        # apparently only lowercase will work
-        # self.__explicit = (ext_config['explicit'] or '').lower()
 
     @property
     def root_directory(self):

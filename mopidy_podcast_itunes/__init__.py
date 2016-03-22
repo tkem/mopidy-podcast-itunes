@@ -52,25 +52,28 @@ class Extension(ext.Extension):
 
     def get_config_schema(self):
         schema = super(Extension, self).get_config_schema()
-        schema['base_url'] = config.String()
-        schema['country'] = config.String(choices=COUNTRIES)
-        schema['explicit'] = config.String(optional=True, choices=EXPLICIT)
-        schema['charts'] = config.String(choices=CHARTS)
-        schema['charts_limit'] = config.Integer(
-            minimum=1, maximum=MAX_LIMIT, optional=True
+        schema.update(
+            base_url=config.String(),
+            root_directory_name=config.String(),
+            country=config.String(choices=COUNTRIES),
+            explicit=config.String(choices=EXPLICIT, optional=True),
+            charts=config.String(choices=CHARTS),
+            charts_limit=config.Integer(
+                minimum=1, maximum=MAX_LIMIT, optional=True
+            ),
+            search_limit=config.Integer(
+                minimum=1, maximum=MAX_LIMIT, optional=True
+            ),
+            timeout=config.Integer(minimum=1, optional=True),
+            retries=config.Integer(minimum=0),
+            # no longer used
+            charts_format=config.Deprecated(),
+            episode_format=config.Deprecated(),
+            genre_format=config.Deprecated(),
+            podcast_format=config.Deprecated(),
+            root_genre_id=config.Deprecated(),
+            root_name=config.Deprecated()
         )
-        schema['search_limit'] = config.Integer(
-            minimum=1, maximum=MAX_LIMIT, optional=True
-        )
-        schema['root_directory_name'] = config.String()
-        schema['timeout'] = config.Integer(optional=True, minimum=1)
-        # no longer used
-        schema['charts_format'] = config.Deprecated()
-        schema['episode_format'] = config.Deprecated()
-        schema['genre_format'] = config.Deprecated()
-        schema['podcast_format'] = config.Deprecated()
-        schema['root_genre_id'] = config.Deprecated()
-        schema['root_name'] = config.Deprecated()
         return schema
 
     def setup(self, registry):

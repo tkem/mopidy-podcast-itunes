@@ -62,8 +62,10 @@ class iTunesPodcastClient(object):
             'entity': entity,
             'attribute': attribute,
             'limit': limit,
-            'explicit': explicit,  # TODO: yes/no from bool
-            'genreId': genre_id  # undocumented, working?
+            # apparently only lowercase will work, contrary to iTunes specs
+            'explicit': (explicit.lower() if explicit else None),
+            # undocumented, and apparently not really working as expected
+            'genreId': genre_id
         })
         return result.get('results', [])
 

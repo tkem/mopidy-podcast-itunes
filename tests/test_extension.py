@@ -18,9 +18,11 @@ def test_get_config_schema():
     assert 'charts' in schema
     assert 'country' in schema
     assert 'explicit' in schema
+    assert 'charts' in schema
     assert 'charts_limit' in schema
     assert 'search_limit' in schema
     assert 'timeout' in schema
+    assert 'retries' in schema
 
 
 def test_setup():

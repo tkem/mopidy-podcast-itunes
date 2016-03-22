@@ -90,7 +90,7 @@ def query(query, uris=[], exact=False):
         'media': 'podcast',
         'entity': entity,
         'attribute': attribute,
-        # FIXME: not quite working as expected...
+        # FIXME: not working as expected...
         # 'genre_id': ','.join(uri.rpartition(':')[2] for uri in uris) or None
     }
 

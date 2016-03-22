@@ -5,8 +5,8 @@ from setuptools import find_packages, setup
 
 def get_version(filename):
     from re import findall
-    with open(filename) as fh:
-        metadata = dict(findall("__([a-z]+)__ = '([^']+)'", fh.read()))
+    with open(filename) as f:
+        metadata = dict(findall("__([a-z]+)__ = '([^']+)'", f.read()))
     return metadata['version']
 
 
@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'setuptools',
         'Mopidy >= 1.1',
-        'Mopidy-Podcast >= 2.0',
+        'Mopidy-Podcast >= 1.0',  # FIXME
         'Pykka >= 1.1',
         'requests >= 2.0'
     ],

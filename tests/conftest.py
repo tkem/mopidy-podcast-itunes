@@ -15,13 +15,14 @@ def config():
     return {
         'podcast-itunes': {
             'base_url': 'http://itunes.apple.com/',
-            'root_directory_name': 'Top Podcasts on iTunes Store',
+            'root_directory_name': 'iTunes Store: Top Podcasts',
             'country': 'US',
             'explicit': None,
             'charts': 'podcasts',
             'charts_limit': 20,
             'search_limit': 20,
-            'timeout': 10
+            'timeout': 10,
+            'retries': 3
         },
         'proxy': {}
     }
