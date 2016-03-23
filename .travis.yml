@@ -8,6 +8,7 @@ python:
 env:
   - TOX_ENV=py27
   - TOX_ENV=flake8
+  - TOX_ENV=check-manifest
 
 install:
   - "pip install tox"
