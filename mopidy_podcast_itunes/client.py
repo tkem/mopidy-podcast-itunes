@@ -20,6 +20,13 @@ def genres(result, g):
     return result
 
 
+def http_adapter(config):
+    import requests
+    return requests.adapters.HTTPAdapter(
+        max_retries=config[Extension.ext_name]['retries']
+    )
+
+
 class iTunesPodcastClient(object):
 
     def __init__(self, config):
@@ -27,6 +34,7 @@ class iTunesPodcastClient(object):
         self.__country = config[Extension.ext_name]['country']
         self.__timeout = config[Extension.ext_name]['timeout']
         self.__session = Extension.get_requests_session(config)
+        self.__session.mount(self.__base_url, http_adapter(config))
         self.__genres = {}
 
     def charts(self, genre_id, name, limit=None):
@@ -83,19 +91,19 @@ if __name__ == '__main__':  # pragma: no cover
     import sys
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('args', metavar='ID | TERM', nargs='*')
+    parser.add_argument('arg', metavar='TERM | CHARTS', nargs='?')
     parser.add_argument('-B', '--base-url', default=BASE_URL)
-    parser.add_argument('-C', '--country', default='US')
     parser.add_argument('-a', '--attribute')
-    parser.add_argument('-c', '--charts')
+    parser.add_argument('-c', '--country', default='US')
     parser.add_argument('-e', '--entity')
     parser.add_argument('-g', '--genre-id')
     parser.add_argument('-i', '--indent', type=int)
     parser.add_argument('-l', '--limit', type=int)
     parser.add_argument('-m', '--media')
-    parser.add_argument('-s', '--search', action='store_true')
+    parser.add_argument('-r', '--retries', type=int, default=0)
     parser.add_argument('-t', '--timeout', type=float)
     parser.add_argument('-v', '--verbose', action='store_true')
+    parser.add_argument('-x', '--explicit')
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.WARN)
@@ -104,23 +112,20 @@ if __name__ == '__main__':  # pragma: no cover
         Extension.ext_name: {
             'base_url': args.base_url,
             'country': args.country,
-            'timeout': args.timeout
+            'timeout': args.timeout,
+            'retries': args.retries
         },
         'proxy': {}
     })
-    if args.search:
-        result = client.search(
-            ' '.join(args.args), args.media, args.entity, args.attribute,
-            limit=args.limit, genre_id=args.genre_id
-        )
-    elif args.charts and args.genre_id:
-        result = client.charts(args.genre_id, args.charts, limit=args.limit)
-    elif args.genre_id:
-        result = client.genre(args.genre_id)
-    elif args.args:
-        result = client.lookup(args.args, args.entity, limit=args.limit)
+
+    if not args.arg:
+        result = client.genre(args.genre_id or '26')
+    elif args.arg in ('podcasts', 'audioPodcasts', 'videoPodcasts'):
+        result = client.charts(args.genre_id or '26', args.arg, args.limit)
     else:
-        parser.print_help()
-        sys.exit(1)
+        result = client.search(
+            args.arg, args.media, args.entity, args.attribute,
+            args.limit, args.explicit, args.genre_id
+        )
     json.dump(result, sys.stdout, indent=args.indent, sort_keys=True)
     sys.stdout.write('\n')
