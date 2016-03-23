@@ -54,7 +54,6 @@ class Extension(ext.Extension):
         schema = super(Extension, self).get_config_schema()
         schema.update(
             base_url=config.String(),
-            root_directory_name=config.String(),
             country=config.String(choices=COUNTRIES),
             explicit=config.String(choices=EXPLICIT, optional=True),
             charts=config.String(choices=CHARTS),

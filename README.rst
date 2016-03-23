@@ -31,10 +31,6 @@ The following configuration values are available:
 - ``podcast-itunes/base_url``: The base URL for the iTunes Store.
   Defaults to ``http://itunes.apple.com/``.
 
-- ``podcast-itunes/root_directory_name``: The name of the Mopidy root
-  directory for browsing the iTunes Store.  Defaults to ``iTunes
-  Store: Top Podcasts``.
-
 - ``podcast-itunes/country``: The ISO country code for the store to be
   used.  Defaults to ``US``.
 

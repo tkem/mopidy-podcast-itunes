@@ -15,7 +15,6 @@ def config():
     return {
         'podcast-itunes': {
             'base_url': 'http://itunes.apple.com/',
-            'root_directory_name': 'iTunes Store: Top Podcasts',
             'country': 'US',
             'explicit': None,
             'charts': 'podcasts',

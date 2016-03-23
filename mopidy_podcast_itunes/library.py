@@ -16,7 +16,6 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
 
     def __init__(self, config, backend):
         super(iTunesPodcastLibraryProvider, self).__init__(backend)
-        self.__root_name = config[Extension.ext_name]['root_directory_name']
         self.__charts_kwargs = {
             'name': config[Extension.ext_name]['charts'],
             'limit': config[Extension.ext_name]['charts_limit']
@@ -29,7 +28,7 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
     @property
     def root_directory(self):
         return models.Ref.directory(
-            name=self.__root_name,
+            name='iTunes Store: Podcasts',
             uri='podcast+itunes:'
         )
 

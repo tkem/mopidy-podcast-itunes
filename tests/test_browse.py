@@ -89,10 +89,7 @@ def lookup():
 
 
 def test_root_directory(config, library):
-    assert library.root_directory == Ref.directory(
-        name=config[Extension.ext_name]['root_directory_name'],
-        uri='podcast+itunes:'
-    )
+    assert library.root_directory.uri == 'podcast+itunes:'
 
 
 @responses.activate

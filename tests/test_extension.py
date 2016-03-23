@@ -14,8 +14,6 @@ def test_get_default_config():
 def test_get_config_schema():
     schema = Extension().get_config_schema()
     assert 'base_url' in schema
-    assert 'root_directory_name' in schema
-    assert 'charts' in schema
     assert 'country' in schema
     assert 'explicit' in schema
     assert 'charts' in schema

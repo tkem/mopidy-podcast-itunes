@@ -1,12 +1,15 @@
 v2.0.0 (UNRELEASED)
 -------------------
 
-- Upgrade dependencies to Mopidy v1.1 and Mopidy-Podcast v2.0.
+- Converted from Mopidy-Podcast directory extension to regular Mopidy
+  backend extension.  No longer uses Mopidy-Podcast directory API.
 
 - Add workaround for apparent changes in iTunes search API regarding
   the ``explicit`` parameter.
 
 - Add HTTP connection retries configuration.
+
+- Upgrade dependencies to Mopidy v1.1 and Mopidy-Podcast v2.0.
 
 
 v1.0.0 (2014-05-24)
