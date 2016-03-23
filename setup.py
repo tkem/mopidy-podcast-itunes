@@ -28,7 +28,7 @@ setup(
     install_requires=[
         'setuptools',
         'Mopidy >= 1.1',
-        'Mopidy-Podcast >= 1.0',  # FIXME
+        'Mopidy-Podcast >= 2.0',
         'Pykka >= 1.1',
         'requests >= 2.0'
     ],

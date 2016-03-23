@@ -1,4 +1,4 @@
-v2.0.0 (UNRELEASED)
+v2.0.0 (2016-03-23)
 -------------------
 
 - Converted from Mopidy-Podcast directory extension to regular Mopidy
