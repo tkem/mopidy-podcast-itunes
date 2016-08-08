@@ -61,10 +61,6 @@ Project Resources
     :target: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/pypi/dm/Mopidy-Podcast-iTunes.svg?style=flat
-    :target: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
-    :alt: Number of PyPI downloads
-
 .. image:: https://img.shields.io/travis/tkem/mopidy-podcast-itunes/master.svg?style=flat
     :target: https://travis-ci.org/tkem/mopidy-podcast-itunes
     :alt: Travis CI build status
