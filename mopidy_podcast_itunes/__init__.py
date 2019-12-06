@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import os
 
 from mopidy import config, ext, httpclient
@@ -51,7 +49,7 @@ class Extension(ext.Extension):
         return config.read(os.path.join(os.path.dirname(__file__), 'ext.conf'))
 
     def get_config_schema(self):
-        schema = super(Extension, self).get_config_schema()
+        schema = super().get_config_schema()
         schema.update(
             base_url=config.String(),
             country=config.String(choices=COUNTRIES),
@@ -84,7 +82,7 @@ class Extension(ext.Extension):
         import requests
 
         proxy = httpclient.format_proxy(config['proxy'])
-        user_agent_string = '%s/%s' % (cls.dist_name, cls.version)
+        user_agent_string = f'{cls.dist_name}/{cls.version}'
         user_agent = httpclient.format_user_agent(user_agent_string)
 
         session = requests.Session()

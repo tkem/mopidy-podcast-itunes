@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import collections
 import logging
 
@@ -15,7 +13,7 @@ logger = logging.getLogger(__name__)
 class iTunesPodcastLibraryProvider(backend.LibraryProvider):
 
     def __init__(self, config, backend):
-        super(iTunesPodcastLibraryProvider, self).__init__(backend)
+        super().__init__(backend)
         self.__charts_kwargs = {
             'name': config[Extension.ext_name]['charts'],
             'limit': config[Extension.ext_name]['charts_limit']

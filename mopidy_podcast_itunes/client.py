@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import logging
 
 from urlparse import urljoin
@@ -27,7 +25,7 @@ def http_adapter(config):
     )
 
 
-class iTunesPodcastClient(object):
+class iTunesPodcastClient:
 
     def __init__(self, config):
         self.__base_url = config[Extension.ext_name]['base_url']
@@ -42,7 +40,7 @@ class iTunesPodcastClient(object):
         try:
             url = g['chartUrls'][name]
         except KeyError:
-            raise LookupError('No %s charts for genreId %s' % (name, genre_id))
+            raise LookupError(f'No {name} charts for genreId {genre_id}')
         ids = self.__request(url, params={'limit': limit}).get('resultIds', [])
         result = self.__request(urljoin(self.__base_url, LOOKUP_PATH), params={
             'id': ','.join(map(str, ids))
