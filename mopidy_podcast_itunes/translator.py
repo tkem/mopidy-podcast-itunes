@@ -102,9 +102,9 @@ def ref(item):
         return translate(item)
 
 
-def uri(feedurl, guid=None, safe=uritools.SUB_DELIMS + b":@/?"):
+def uri(feedurl, guid=None, safe=uritools.SUB_DELIMS + ":@/?"):
     uri = uritools.uridefrag("podcast+" + feedurl).uri
     if guid:
-        return uri + "#" + uritools.uriencode(guid, safe=safe)
+        return uri + "#" + uritools.uriencode(guid, safe=safe).decode()
     else:
         return uri
