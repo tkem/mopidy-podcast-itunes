@@ -48,7 +48,7 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
         uris = frozenset(uris or []).difference([self.root_directory.uri])
         try:
             kwargs = translator.query(query or {}, uris, exact)
-        except NotImplementedError as e:
+        except NotImplementedError:
             return None  # query not supported
         except Exception as e:
             logger.error("%s", e)

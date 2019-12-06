@@ -1,5 +1,5 @@
 import re
-from urlparse import urljoin
+from urllib.parse import urljoin
 
 from mopidy.models import Ref
 

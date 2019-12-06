@@ -47,6 +47,9 @@ _QUERY = {
 }
 
 
+_SCHEME = Extension.ext_name.replace("-", "+")
+
+
 def artists(item):
     if "artistName" in item:
         return [models.Artist(name=item["artistName"])]
@@ -54,7 +57,7 @@ def artists(item):
         return None
 
 
-def directory(type, g, name=None, scheme=Extension.ext_name.replace("-", "+")):
+def directory(type, g, name=None, scheme=_SCHEME):
     return models.Ref.directory(
         uri=":".join((scheme, type, g["id"])), name=(name or g["name"])
     )
@@ -69,7 +72,7 @@ def model(item):
         return translate(item)
 
 
-def query(query, uris=[], exact=False):
+def query(query, uris=tuple(), exact=False):
     if exact:
         raise NotImplementedError("Exact queries not supported")
     try:

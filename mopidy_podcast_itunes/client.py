@@ -1,5 +1,6 @@
 import logging
-from urlparse import urljoin
+from functools import reduce
+from urllib.parse import urljoin
 
 from . import Extension
 
