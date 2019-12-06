@@ -1,6 +1,5 @@
-from mopidy import backend
-
 import pykka
+from mopidy import backend
 
 from .client import iTunesPodcastClient
 from .library import iTunesPodcastLibraryProvider
@@ -8,7 +7,7 @@ from .library import iTunesPodcastLibraryProvider
 
 class iTunesPodcastBackend(pykka.ThreadingActor, backend.Backend):
 
-    uri_schemes = ['podcast+itunes']
+    uri_schemes = ["podcast+itunes"]
 
     def __init__(self, config, audio):
         super().__init__()

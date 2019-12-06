@@ -1,5 +1,4 @@
 import mock
-
 import pytest
 
 
@@ -11,23 +10,24 @@ def audio():
 @pytest.fixture
 def config():
     return {
-        'podcast-itunes': {
-            'base_url': 'http://itunes.apple.com/',
-            'country': 'US',
-            'explicit': None,
-            'charts': 'podcasts',
-            'charts_limit': 20,
-            'search_limit': 20,
-            'timeout': 10,
-            'retries': 3
+        "podcast-itunes": {
+            "base_url": "http://itunes.apple.com/",
+            "country": "US",
+            "explicit": None,
+            "charts": "podcasts",
+            "charts_limit": 20,
+            "search_limit": 20,
+            "timeout": 10,
+            "retries": 3,
         },
-        'proxy': {}
+        "proxy": {},
     }
 
 
 @pytest.fixture
 def backend(config, audio):
     from mopidy_podcast_itunes import backend
+
     return backend.iTunesPodcastBackend(config, audio)
 
 
