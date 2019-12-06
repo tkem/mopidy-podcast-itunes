@@ -1,13 +1,28 @@
+*********************
 Mopidy-Podcast-iTunes
-========================================================================
+*********************
+
+.. image:: https://img.shields.io/pypi/v/Mopidy-Podcast-iTunes
+    :target: https://pypi.org/project/Mopidy-Podcast-iTunes/
+    :alt: Latest PyPI version
+
+.. image:: https://img.shields.io/circleci/build/gh/tkem/mopidy-podcast-itunes
+    :target: https://circleci.com/gh/tkem/mopidy-podcast-itunes
+    :alt: CircleCI build status
+
+.. image:: https://img.shields.io/codecov/c/gh/tkem/mopidy-podcast-itunes
+    :target: https://codecov.io/gh/tkem/mopidy-podcast-itunes
+    :alt: Test coverage
 
 Mopidy-Podcast-iTunes is a Mopidy_ extension for searching and
 browsing podcasts on the `Apple iTunes Store
 <https://itunes.apple.com/genre/podcasts/id26>`_.
 
+.. _Mopidy: http://www.mopidy.com/
+
 
 Installation
-------------------------------------------------------------------------
+============
 
 On Debian Linux and Debian-based distributions like Ubuntu or
 Raspbian, install the ``mopidy-podcast-itunes`` package from
@@ -19,9 +34,11 @@ Otherwise, install the Python package from PyPI_::
 
   pip install Mopidy-Podcast-iTunes
 
+.. _apt.mopidy.com: http://apt.mopidy.com/
+
 
 Configuration
-------------------------------------------------------------------------
+=============
 
 The following configuration values are available:
 
@@ -55,39 +72,16 @@ The following configuration values are available:
 
 
 Project Resources
-------------------------------------------------------------------------
+=================
 
-.. image:: https://img.shields.io/pypi/v/Mopidy-Podcast-iTunes.svg?style=flat
-    :target: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
-    :alt: Latest PyPI version
-
-.. image:: https://img.shields.io/travis/tkem/mopidy-podcast-itunes/master.svg?style=flat
-    :target: https://travis-ci.org/tkem/mopidy-podcast-itunes
-    :alt: Travis CI build status
-
-.. image:: https://img.shields.io/coveralls/tkem/mopidy-podcast-itunes/master.svg?style=flat
-   :target: https://coveralls.io/r/tkem/mopidy-podcast-itunes?branch=master
-   :alt: Test coverage
-
-- `Issue Tracker`_
-- `Source Code`_
-- `Change Log`_
+- `Source code <https://github.com/tkem/mopidy-podcast-itunes>`_
+- `Issue tracker <https://github.com/tkem/mopidy-podcast-itunes/issues>`_
+- `Changelog <https://github.com/tkem/mopidy-podcast-itunes/blob/master/CHANGELOG.rst>`_
 
 
-License
-------------------------------------------------------------------------
+Credits
+=======
 
-Copyright (c) 2014-2016 Thomas Kemmer.
-
-Licensed under the `Apache License, Version 2.0`_.
-
-
-.. _Mopidy: http://www.mopidy.com/
-.. _apt.mopidy.com: http://apt.mopidy.com/
-
-.. _PyPI: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
-.. _Issue Tracker: https://github.com/tkem/mopidy-podcast-itunes/issues/
-.. _Source Code: https://github.com/tkem/mopidy-podcast-itunes/
-.. _Change Log: https://github.com/tkem/mopidy-podcast-itunes/blob/master/CHANGES.rst
-
-.. _Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
+- Original author: `Thomas Kemmer <https://github.com/tkem>`__
+- Current maintainer: `Thomas Kemmer <https://github.com/tkem>`__
+- `Contributors <https://github.com/tkem/mopidy-podcast-itunes/graphs/contributors>`_

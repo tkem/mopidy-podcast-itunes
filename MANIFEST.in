@@ -1,8 +1,13 @@
-include CHANGES.rst
+include *.py
+include *.rst
 include LICENSE
 include MANIFEST.in
-include README.rst
-include mopidy_podcast_itunes/ext.conf
+include pyproject.toml
 include tox.ini
+
+recursive-include .circleci *
+recursive-include .github *
+
+include mopidy_*/ext.conf
 
 recursive-include tests *.py
