@@ -1,4 +1,5 @@
-import mock
+from unittest import mock
+
 from mopidy_podcast_itunes import Extension, backend
 
 
