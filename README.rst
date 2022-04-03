@@ -6,13 +6,21 @@ Mopidy-Podcast-iTunes
     :target: https://pypi.org/project/Mopidy-Podcast-iTunes/
     :alt: Latest PyPI version
 
-.. image:: https://img.shields.io/circleci/build/gh/tkem/mopidy-podcast-itunes
-    :target: https://circleci.com/gh/tkem/mopidy-podcast-itunes
-    :alt: CircleCI build status
+.. image:: https://img.shields.io/github/workflow/status/tkem/mopidy-podcast-itunes/CI
+    :target: https://github.com/tkem/mopidy-podcast-itunes/actions
+    :alt: CI build status
 
 .. image:: https://img.shields.io/codecov/c/gh/tkem/mopidy-podcast-itunes
     :target: https://codecov.io/gh/tkem/mopidy-podcast-itunes
     :alt: Test coverage
+
+.. image:: https://img.shields.io/github/license/tkem/mopidy-podcast-itunes
+   :target: https://raw.github.com/tkem/mopidy-podcast-itunes/master/LICENSE
+   :alt: License
+
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/psf/black
+   :alt: Code style: black
 
 Mopidy-Podcast-iTunes is a Mopidy_ extension for searching and
 browsing podcasts on the `Apple iTunes Store

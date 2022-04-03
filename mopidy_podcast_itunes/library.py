@@ -79,7 +79,10 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
                 refs.append(ref)
         return refs
 
-    def __genre(self, id, key=lambda g: g["name"].lower()):
+    def __genre(self, id):
+        def key(g):
+            return g["name"].lower()
+
         g = self.backend.client.genre(id)
         refs = [translator.directory("charts", g, "Top %s" % g["name"])]
         for genre in sorted(g.get("subgenres", {}).values(), key=key):
