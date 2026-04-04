@@ -1,5 +1,6 @@
-import uritools
 from mopidy import models
+
+import uritools
 
 from . import Extension
 
@@ -14,9 +15,7 @@ _MODELS = {
     "podcast-episode": lambda item: models.Track(
         uri=uri(item["feedUrl"], item["episodeGuid"]),
         name=item["trackName"],
-        album=models.Album(
-            uri=uri(item["feedUrl"]), name=item["collectionName"]
-        ),
+        album=models.Album(uri=uri(item["feedUrl"]), name=item["collectionName"]),
         artists=artists(item),
         date=(item.get("releaseDate", "").partition("T")[0] or None),
         genre=item.get("primaryGenreName"),

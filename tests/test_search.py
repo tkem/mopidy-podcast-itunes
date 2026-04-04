@@ -3,6 +3,7 @@ import re
 from mopidy import models
 
 import pytest
+
 import responses
 
 
@@ -37,9 +38,7 @@ def results():
 def test_search(config, library, results):
     responses.add(responses.GET, re.compile(r".*/search\b.*"), json=results)
     assert library.search({"any": ["foo"]}) == models.SearchResult(
-        albums=[
-            models.Album(name="Foo", uri="podcast+http://example.com/feed1234")
-        ],
+        albums=[models.Album(name="Foo", uri="podcast+http://example.com/feed1234")],
         tracks=[
             models.Track(
                 name="Bar",

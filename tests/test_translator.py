@@ -1,7 +1,8 @@
 from mopidy import models
 
-import pytest
 from mopidy_podcast_itunes import translator
+
+import pytest
 
 
 @pytest.mark.parametrize(
@@ -43,9 +44,7 @@ def test_uri(feedurl, guid, expected):
                 "episodeGuid": "1",
                 "trackName": "foo",
             },
-            models.Ref.track(
-                uri="podcast+http://example.com/feed#1", name="foo"
-            ),
+            models.Ref.track(uri="podcast+http://example.com/feed#1", name="foo"),
         ),
     ],
 )
@@ -63,8 +62,7 @@ def test_ref(item, expected):
     ],
 )
 def test_ref_error(item):
-    # TODO: raise ValueError for all of these
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         translator.ref(item)
 
 
@@ -102,9 +100,7 @@ def test_ref_error(item):
             models.Track(
                 uri="podcast+http://example.com/feed#1",
                 name="foo",
-                album=models.Album(
-                    uri="podcast+http://example.com/feed", name="bar"
-                ),
+                album=models.Album(uri="podcast+http://example.com/feed", name="bar"),
                 artists=[models.Artist(name="baz")],
                 date="1972-09-16",
                 genre="Music",
@@ -132,8 +128,7 @@ def test_model(item, expected):
     ],
 )
 def test_model_error(item):
-    # TODO: raise ValueError for all of these
-    with pytest.raises(Exception):
+    with pytest.raises(ValueError):
         translator.model(item)
 
 

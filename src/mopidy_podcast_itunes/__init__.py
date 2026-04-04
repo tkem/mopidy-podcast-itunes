@@ -1,10 +1,8 @@
 import pathlib
 
-import pkg_resources
-
 from mopidy import config, ext, httpclient
 
-__version__ = pkg_resources.get_distribution("Mopidy-Podcast").version
+__version__ = "3.1.0"
 
 CHARTS = ["podcasts", "audioPodcasts", "videoPodcasts"]
 
@@ -281,12 +279,8 @@ class Extension(ext.Extension):
             country=config.String(choices=COUNTRIES),
             explicit=config.String(choices=EXPLICIT, optional=True),
             charts=config.String(choices=CHARTS),
-            charts_limit=config.Integer(
-                minimum=1, maximum=MAX_LIMIT, optional=True
-            ),
-            search_limit=config.Integer(
-                minimum=1, maximum=MAX_LIMIT, optional=True
-            ),
+            charts_limit=config.Integer(minimum=1, maximum=MAX_LIMIT, optional=True),
+            search_limit=config.Integer(minimum=1, maximum=MAX_LIMIT, optional=True),
             timeout=config.Integer(minimum=1, optional=True),
             retries=config.Integer(minimum=0),
             # no longer used

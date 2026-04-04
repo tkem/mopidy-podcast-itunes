@@ -1,5 +1,6 @@
-import pykka
 from mopidy import backend
+
+import pykka
 
 from .client import iTunesPodcastClient
 from .library import iTunesPodcastLibraryProvider

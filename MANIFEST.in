@@ -1,13 +1,14 @@
-include *.py
-include *.rst
+include CHANGELOG.rst
 include LICENSE
 include MANIFEST.in
-include pyproject.toml
+include README.rst
 include tox.ini
+exclude .readthedocs.yaml
 
-recursive-include .circleci *
-recursive-include .github *
+include src/*/ext.conf
 
-include mopidy_*/ext.conf
+recursive-include docs *
+prune docs/_build
 
 recursive-include tests *.py
+

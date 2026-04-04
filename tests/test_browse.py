@@ -3,9 +3,11 @@ from urllib.parse import urljoin
 
 from mopidy.models import Ref
 
-import pytest
-import responses
 from mopidy_podcast_itunes import Extension
+
+import pytest
+
+import responses
 
 
 @pytest.fixture
@@ -34,9 +36,7 @@ def genres(charts_url):
                         "1002": {
                             "name": "Baz",
                             "id": "1002",
-                            "chartUrls": {
-                                "podcasts": urljoin(charts_url, "?g=1002")
-                            },
+                            "chartUrls": {"podcasts": urljoin(charts_url, "?g=1002")},
                         }
                     },
                 },
