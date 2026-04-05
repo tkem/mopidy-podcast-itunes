@@ -57,12 +57,22 @@ def test_ref(item, expected):
     [
         {},
         {"kind": "song", "trackName": "foo"},
+    ],
+)
+def test_ref_value_error(item):
+    with pytest.raises(ValueError):
+        translator.ref(item)
+
+
+@pytest.mark.parametrize(
+    "item",
+    [
         {"kind": "podcast", "trackName": "foo"},
         {"kind": "podcast-episode", "trackId": 1234, "trackName": "foo"},
     ],
 )
-def test_ref_error(item):
-    with pytest.raises(ValueError):
+def test_ref_key_error(item):
+    with pytest.raises(KeyError):
         translator.ref(item)
 
 
@@ -118,6 +128,16 @@ def test_model(item, expected):
     [
         {},
         {"kind": "song", "trackName": "foo"},
+    ],
+)
+def test_model_type_error(item):
+    with pytest.raises(TypeError):
+        translator.model(item)
+
+
+@pytest.mark.parametrize(
+    "item",
+    [
         {"kind": "podcast", "trackName": "foo"},
         {"kind": "podcast-episode", "trackName": "foo", "trackId": 12345678},
         {
@@ -127,8 +147,8 @@ def test_model(item, expected):
         },
     ],
 )
-def test_model_error(item):
-    with pytest.raises(ValueError):
+def test_model_key_error(item):
+    with pytest.raises(KeyError):
         translator.model(item)
 
 
