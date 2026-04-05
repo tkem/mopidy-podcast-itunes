@@ -38,7 +38,7 @@ dependencies = [
 Homepage = "https://github.com/tkem/mopidy-podcast-itunes/"
 
 [project.entry-points."mopidy.ext"]
-podcast = "mopidy_podcast_itunes:Extension"
+podcast-itunes = "mopidy_podcast_itunes:Extension"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
