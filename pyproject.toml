@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Mopidy-Podcast-iTunes"
-description = "Mopidy extension for searching and browsing podcasts on the Apple iTunes Store"
+description = "Mopidy extension for searching and browsing podcasts on Apple Podcasts"
 readme = "README.rst"
 requires-python = ">= 3.7"
 license = "Apache-2.0"

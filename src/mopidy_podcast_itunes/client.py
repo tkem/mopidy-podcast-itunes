@@ -1,11 +1,13 @@
+import json
 import logging
 from functools import reduce
 from urllib.parse import urljoin
 
 from . import Extension
 
-BASE_URL = "http://itunes.apple.com/"
+BASE_URL = "https://itunes.apple.com/"
 GENRES_PATH = "/WebObjects/MZStoreServices.woa/ws/genres"
+CHARTS_PATH = "/%s/rss/toppodcasts/limit=%d/genre=%s/json"
 LOOKUP_PATH = "/lookup"
 SEARCH_PATH = "/search"
 
@@ -35,13 +37,19 @@ class iTunesPodcastClient:
         self.__session.mount(self.__base_url, http_adapter(config))
         self.__genres = {}
 
-    def charts(self, genre_id, name, limit=None):
-        g = self.genre(genre_id)
-        try:
-            url = g["chartUrls"][name]
-        except KeyError:
-            raise LookupError(f"No {name} charts for genreId {genre_id}")
-        ids = self.__request(url, params={"limit": limit}).get("resultIds", [])
+    def charts(self, genre_id, limit=None):
+        # FIXME: convert feed entries directly to Refs without lookup
+        # request?
+        charts = self.__request(
+            urljoin(
+                self.__base_url, CHARTS_PATH % (self.__country, limit or 20, genre_id)
+            )
+        )
+        ids = []
+        for e in charts.get("feed", {}).get("entry", []):
+            id = e.get("id", {}).get("attributes", {}).get("im:id")
+            if id:
+                ids.append(id)
         result = self.__request(
             urljoin(self.__base_url, LOOKUP_PATH),
             params={"id": ",".join(map(str, ids))},
@@ -93,11 +101,16 @@ class iTunesPodcastClient:
         logger.debug("Retrieving %s took %s", response.url, response.elapsed)
         return response.json()
 
+    def __request_text(self, url, **kwargs):
+        response = self.__session.get(url, timeout=self.__timeout, **kwargs)
+        response.raise_for_status()
+        logger.debug("Retrieving %s took %s", response.url, response.elapsed)
+        return response.text
+
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse
     import logging
-    import json
     import sys
 
     parser = argparse.ArgumentParser()
@@ -132,8 +145,9 @@ if __name__ == "__main__":  # pragma: no cover
 
     if not args.arg:
         result = client.genre(args.genre_id or "26")
+    # FIXME: charts type no longer supported
     elif args.arg in ("podcasts", "audioPodcasts", "videoPodcasts"):
-        result = client.charts(args.genre_id or "26", args.arg, args.limit)
+        result = client.charts(args.genre_id or "26", args.limit)
     else:
         result = client.search(
             args.arg,

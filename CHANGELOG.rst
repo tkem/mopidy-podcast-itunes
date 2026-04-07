@@ -3,6 +3,11 @@ v3.1.0 (UNRELEASED)
 
 - Add support for Python <= 3.14.
 
+- Rename root directory to "Apple Podcasts".
+
+- Re-enable podcast charts browsing by switching to currently
+  supported APIs.
+
 - Update unit tests fur use with current pytest versions.
 
 - Modernize build environment and packages structure.

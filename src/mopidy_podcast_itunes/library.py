@@ -14,7 +14,6 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
     def __init__(self, config, backend):
         super().__init__(backend)
         self.__charts_kwargs = {
-            "name": config[Extension.ext_name]["charts"],
             "limit": config[Extension.ext_name]["charts_limit"],
         }
         self.__search_kwargs = {
@@ -24,9 +23,7 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
 
     @property
     def root_directory(self):
-        return models.Ref.directory(
-            name="iTunes Store: Podcasts", uri="podcast+itunes:"
-        )
+        return models.Ref.directory(name="Apple Podcasts", uri="podcast+itunes:")
 
     def browse(self, uri):
         if uri == self.root_directory.uri:
@@ -59,7 +56,7 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
             try:
                 model = translator.model(item)
             except Exception as e:
-                logger.error("Error converting iTunes search result: %s", e)
+                logger.error("Error converting iTunes search result: %s %s", e, item)
             else:
                 results[type(model)].append(model)
         return models.SearchResult(
@@ -74,7 +71,7 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
             try:
                 ref = translator.ref(item)
             except Exception as e:
-                logger.error("Error converting iTunes charts item: %s", e)
+                logger.error("Error converting iTunes charts item: %s %s", e, item)
             else:
                 refs.append(ref)
         return refs

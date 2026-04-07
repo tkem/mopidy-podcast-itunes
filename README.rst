@@ -23,10 +23,12 @@ Mopidy-Podcast-iTunes
    :alt: Code style: black
 
 Mopidy-Podcast-iTunes is a Mopidy_ extension for searching and
-browsing podcasts on the `Apple iTunes Store
-<https://itunes.apple.com/genre/podcasts/id26>`_.
+browsing podcasts on `Apple Podcasts`_, using the `iTunes Search
+API`_.
 
-.. _Mopidy: http://www.mopidy.com/
+.. _Apple Podcasts: https://podcasts.apple.com/
+.. _iTunes Search API: https://performance-partners.apple.com/search-api
+.. _Mopidy: https://www.mopidy.com/
 
 
 Installation
@@ -42,7 +44,7 @@ Otherwise, install the Python package from PyPI_::
 
   pip install Mopidy-Podcast-iTunes
 
-.. _apt.mopidy.com: http://apt.mopidy.com/
+.. _apt.mopidy.com: https://apt.mopidy.com/
 .. _PyPI: https://pypi.python.org/pypi/Mopidy-Podcast-iTunes/
 
 
@@ -54,30 +56,27 @@ The following configuration values are available:
 - ``podcast-itunes/enabled``: Whether this extension should be enabled
   or not.  Defaults to ``true``.
 
-- ``podcast-itunes/base_url``: The base URL for the iTunes Store.
-  Defaults to ``http://itunes.apple.com/``.
+- ``podcast-itunes/base_url``: The iTunes Search API base URL.
+  Defaults to ``https://itunes.apple.com/``.
 
-- ``podcast-itunes/country``: The ISO country code for the store to be
-  used.  Defaults to ``US``.
+- ``podcast-itunes/country``: The two-letter country code for the
+  store you want to search.  Defaults to ``US``.
 
-- ``podcast-itunes/explicit``: Whether search results should include
-  explicit content.  Can be set to ``Yes``, ``No``, or left empty to
-  use the store's default.
+- ``podcast-itunes/explicit``: A flag indicating whether or not you
+  want to include explicit content in your search results.  Can be set
+  to ``Yes`` or ``No``.   The default is ``Yes``.
 
-- ``podcast-itunes/charts``: One of ``podcasts``, ``audioPodcasts`` or
-  ``videoPodcasts``.  Defaults to ``audioPodcasts``.
-
-- ``podcast-itunes/charts_limit``: The maximum number of charts
-  entries to retrieve.  Defaults to ``20``.
+- ``podcast-itunes/charts_limit``: The maximum number of podcast
+  charts entries to retrieve when browsing.  Defaults to ``20``.
 
 - ``podcast-itunes/search_limit``: The maximum number of search
   results to retrieve.  Defaults to ``20``.
 
 - ``podcast-itunes/timeout``: The HTTP request timeout in seconds when
-  connecting to the iTunes Store.  Defaults to ``10``.
+  using the Search API.  Defaults to ``10``.
 
 - ``podcast-itunes/retries``: The maximum number of HTTP connection
-  retries when connecting to the iTunes Store.  Defaults to ``3``.
+  retries when using the Search API.  Defaults to ``3``.
 
 
 Project Resources
