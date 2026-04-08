@@ -1,6 +1,6 @@
-**************
-Mopidy-Podcast
-**************
+*********************
+Mopidy-Podcast-iTunes
+*********************
 
 Mopidy-Podcast-iTunes is a Mopidy_ extension for searching and
 browsing podcasts on `Apple Podcasts`_, using the `iTunes Search

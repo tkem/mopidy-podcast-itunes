@@ -13,5 +13,5 @@ Otherwise, install the Python package from PyPI_::
   pip install Mopidy-Podcast-iTunes
 
 
-.. _PyPI: https://pypi.org/project/Mopidy-Podcast/
+.. _PyPI: https://pypi.org/project/Mopidy-Podcast-iTunes/
 .. _apt.mopidy.com: https://apt.mopidy.com/

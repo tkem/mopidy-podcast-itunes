@@ -2,7 +2,7 @@
 License
 *******
 
-Mopidy-Podcast is Copyright (c) 2014-2026 Thomas Kemmer and
+Mopidy-Podcast-iTunes is Copyright (c) 2014-2026 Thomas Kemmer and
 contributors.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you
