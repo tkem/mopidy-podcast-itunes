@@ -1,4 +1,4 @@
-v3.1.0 (UNRELEASED)
+v3.1.0 (2026-04-08)
 ===================
 
 - Add support for Python <= 3.14.
@@ -7,6 +7,9 @@ v3.1.0 (UNRELEASED)
 
 - Re-enable podcast charts browsing by switching to currently
   supported APIs.
+
+- Move documentation to
+  `<https://mopidy-podcast-itunes.readthedocs.io>`_.
 
 - Update unit tests fur use with current pytest versions.
 
