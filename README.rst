@@ -30,21 +30,36 @@ Mopidy-Podcast-iTunes is a Mopidy_ extension for searching and
 browsing podcasts on `Apple Podcasts`_, using the `iTunes Search
 API`_.
 
-For more information and installation instructions, please see
-the Mopidy-Podcast-iTunes online documentation_.
 
-.. _Mopidy: https://www.mopidy.com/
-.. _Apple Podcasts: https://podcasts.apple.com/
-.. _iTunes Search API: https://performance-partners.apple.com/search-api
-.. _Documentation: https://mopidy-podcast-itunes.readthedocs.io/en/latest/
+Installation
+============
+
+On Debian Linux and Debian-based distributions like Ubuntu or
+Raspbian, install the ``mopidy-podcast-itunes`` package from
+apt.mopidy.com_::
+
+  apt-get install mopidy-podcast-itunes
+
+Otherwise, install the Python package from PyPI_::
+
+  pip install Mopidy-Podcast-iTunes
 
 
 Project Resources
 =================
 
-- `Source code <https://github.com/tkem/mopidy-podcast-itunes>`_
-- `Issue tracker <https://github.com/tkem/mopidy-podcast-itunes/issues>`_
-- `Changelog <https://github.com/tkem/mopidy-podcast-itunes/blob/master/CHANGELOG.rst>`_
+- `Documentation`_
+- `Issue tracker`_
+- `Source code`_
+- `Change log`_
+
+
+License
+=======
+
+Copyright (c) 2014-2026 Thomas Kemmer.
+
+Licensed under the `Apache License, Version 2.0`_.
 
 
 Credits
@@ -53,3 +68,17 @@ Credits
 - Original author: `Thomas Kemmer <https://github.com/tkem>`__
 - Current maintainer: `Thomas Kemmer <https://github.com/tkem>`__
 - `Contributors <https://github.com/tkem/mopidy-podcast-itunes/graphs/contributors>`_
+
+.. _Mopidy: https://www.mopidy.com/
+.. _Apple Podcasts: https://podcasts.apple.com/
+.. _iTunes Search API: https://performance-partners.apple.com/search-api
+
+.. _PyPI: https://pypi.org/project/Mopidy-Podcast/
+.. _apt.mopidy.com: https://apt.mopidy.com/
+
+.. _Documentation: https://mopidy-podcast-itunes.readthedocs.io/en/latest/
+.. _Source code: https://github.com/tkem/mopidy-podcast-itunes
+.. _Issue tracker: https://github.com/tkem/mopidy-podcast-itunes/issues
+.. _Change log: https://github.com/tkem/mopidy-podcast-itunes/blob/master/CHANGELOG.rst
+
+.. _Apache License, Version 2.0: https://raw.github.com/tkem/mopidy-podcast-itunes/master/LICENSE
