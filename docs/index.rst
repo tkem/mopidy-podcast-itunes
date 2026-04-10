@@ -24,35 +24,35 @@ only a few modifications, if any, to match personal preferences.
 Configuration Values
 ====================
 
-.. confval:: podcast-itunes/enabled
+.. confval:: enabled
 
    Whether this extension should be enabled or not.
 
-.. confval:: podcast-itunes/base_url
+.. confval:: base_url
 
    The iTunes Search API base URL.
 
-.. confval:: podcast-itunes/country
+.. confval:: country
 
    The two-letter country code for the store you want to search.
 
-.. confval:: podcast-itunes/explicit
+.. confval:: explicit
 
    Whether you want to include explicit content in your search results.
 
-.. confval:: podcast-itunes/charts_limit
+.. confval:: charts_limit
 
    The maximum number of podcast charts entries to retrieve when browsing.
 
-.. confval:: podcast-itunes/search_limit
+.. confval:: search_limit
 
    The maximum number of search results to retrieve.
 
-.. confval:: podcast-itunes/timeout
+.. confval:: timeout
 
    The HTTP request timeout in seconds when using the Search API.
 
-.. confval:: podcast-itunes/retries
+.. confval:: retries
 
    The maximum number of HTTP connection retries when using the Search API.
 
