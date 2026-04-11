@@ -1,3 +1,11 @@
+v3.1.2 (2026-04-11)
+===================
+
+- Update and re-enable browsing tests.
+
+- Minor documentation improvements.
+
+
 v3.1.1 (2026-04-10)
 ===================
 
