@@ -8,6 +8,13 @@ Mopidy-Podcast-iTunes is a Mopidy_ extension for searching and
 browsing podcasts on `Apple Podcasts`_, using the `iTunes Search
 API`_.
 
+.. note::
+
+   The iTunes Search API is limited to approximately 20 calls per
+   minute (subject to change).  Mopidy-Podcast-iTunes uses in-memory
+   caching extensively, so you should not be affected by this limit
+   with normal, interactive usage.
+
 
 *************
 Configuration
