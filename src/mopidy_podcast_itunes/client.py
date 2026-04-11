@@ -38,21 +38,18 @@ class iTunesPodcastClient:
         self.__genres = {}
 
     def charts(self, genre_id, limit=None):
-        # FIXME: convert feed entries directly to Refs without lookup
-        # request?
-        charts = self.__request(
-            urljoin(
-                self.__base_url, CHARTS_PATH % (self.__country, limit or 20, genre_id)
-            )
-        )
-        ids = []
-        for e in charts.get("feed", {}).get("entry", []):
-            id = e.get("id", {}).get("attributes", {}).get("im:id")
-            if id:
-                ids.append(id)
+        # for now, ignore self.__genres[genre_id]["rssUrls"] et al.,
+        # since they do not seem to work well without expolicitly
+        # specifying "limit"
+        path = CHARTS_PATH % (self.__country, limit or 20, genre_id)
+        charts = self.__request(urljoin(self.__base_url, path))
+        # chart entries apparently lack the actual feed URL, so we
+        # have to call "lookup" for all entry IDs
+        entries = charts.get("feed", {}).get("entry", [])
+        ids = [e.get("id", {}).get("attributes", {}).get("im:id") for e in entries]
         result = self.__request(
             urljoin(self.__base_url, LOOKUP_PATH),
-            params={"id": ",".join(map(str, ids))},
+            params={"id": ",".join(filter(None, ids))},
         )
         return result.get("results", [])
 
@@ -62,10 +59,11 @@ class iTunesPodcastClient:
                 urljoin(self.__base_url, GENRES_PATH),
                 params={"id": genre_id, "cc": self.__country},
             )
+            # TODO: ignore values except for subgenres, see comments above
             self.__genres.update(reduce(genres, g.values(), {}))
         return self.__genres[genre_id]
 
-    def refresh(self):
+    def refresh(self):  # pragma: no cover
         self.__genres = {}
 
     def search(
@@ -101,12 +99,6 @@ class iTunesPodcastClient:
         logger.debug("Retrieving %s took %s", response.url, response.elapsed)
         return response.json()
 
-    def __request_text(self, url, **kwargs):
-        response = self.__session.get(url, timeout=self.__timeout, **kwargs)
-        response.raise_for_status()
-        logger.debug("Retrieving %s took %s", response.url, response.elapsed)
-        return response.text
-
 
 if __name__ == "__main__":  # pragma: no cover
     import argparse
@@ -114,7 +106,7 @@ if __name__ == "__main__":  # pragma: no cover
     import sys
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("arg", metavar="TERM | CHARTS", nargs="?")
+    parser.add_argument("arg", metavar="SEARCH-TERM | GENRE-ID", nargs="?")
     parser.add_argument("-B", "--base-url", default=BASE_URL)
     parser.add_argument("-a", "--attribute")
     parser.add_argument("-c", "--country", default="US")
@@ -145,9 +137,8 @@ if __name__ == "__main__":  # pragma: no cover
 
     if not args.arg:
         result = client.genre(args.genre_id or "26")
-    # FIXME: charts type no longer supported
-    elif args.arg in ("podcasts", "audioPodcasts", "videoPodcasts"):
-        result = client.charts(args.genre_id or "26", args.limit)
+    elif args.arg.isdigit():
+        result = client.charts(args.arg, args.limit)
     else:
         result = client.search(
             args.arg,
