@@ -1,9 +1,6 @@
 import re
-from urllib.parse import urljoin
 
 from mopidy.models import Ref
-
-from mopidy_podcast_itunes import Extension
 
 import pytest
 
@@ -11,32 +8,23 @@ import responses
 
 
 @pytest.fixture
-def charts_url(config):
-    return urljoin(config[Extension.ext_name]["base_url"], "/charts")
-
-
-@pytest.fixture
-def genres(charts_url):
+def genres():
     return {
         "26": {
             "name": "Podcasts",
             "id": "26",
-            "chartUrls": {"podcasts": urljoin(charts_url, "?g=26")},
             "subgenres": {
                 "1000": {
                     "name": "Foo",
                     "id": "1000",
-                    "chartUrls": {"podcasts": urljoin(charts_url, "?g=1000")},
                 },
                 "1001": {
                     "name": "Bar",
                     "id": "1001",
-                    "chartUrls": {"podcasts": urljoin(charts_url, "?g=1001")},
                     "subgenres": {
                         "1002": {
                             "name": "Baz",
                             "id": "1002",
-                            "chartUrls": {"podcasts": urljoin(charts_url, "?g=1002")},
                         }
                     },
                 },
@@ -46,8 +34,27 @@ def genres(charts_url):
 
 
 @pytest.fixture
-def charts():
-    return {"resultIds": [1234, 5678]}
+def toppodcasts():
+    return {
+        "feed": {
+            "author": {
+                "name": {"label": "iTunes Store"},
+                "uri": {"label": "http://www.apple.com/itunes/"},
+            },
+            "entry": [
+                {
+                    "id": {
+                        "attributes": {"im:id": "1234"},
+                    },
+                },
+                {
+                    "id": {
+                        "attributes": {"im:id": "5678"},
+                    },
+                },
+            ],
+        }
+    }
 
 
 @pytest.fixture
@@ -90,10 +97,9 @@ def test_browse_root(config, library, genres):
 
 
 @responses.activate
-@pytest.mark.skip("FIXME: update charts handling")
-def test_browse_charts(config, library, genres, charts, lookup):
+def test_browse_charts(config, library, genres, toppodcasts, lookup):
     responses.add(responses.GET, re.compile(r".*/genres\b.*"), json=genres)
-    responses.add(responses.GET, re.compile(r".*/charts\b.*"), json=charts)
+    responses.add(responses.GET, re.compile(r".*/toppodcasts\b.*"), json=toppodcasts)
     responses.add(responses.GET, re.compile(r".*/lookup\b.*"), json=lookup)
     assert library.browse("podcast+itunes:charts:1000") == [
         Ref.album(name="foo", uri="podcast+http://example.com/1234"),
@@ -102,9 +108,9 @@ def test_browse_charts(config, library, genres, charts, lookup):
 
 
 @responses.activate
-def test_browse_subgenre(config, library, genres, charts, lookup):
+def test_browse_subgenre(config, library, genres, toppodcasts, lookup):
     responses.add(responses.GET, re.compile(r".*/genres\b.*"), json=genres)
-    responses.add(responses.GET, re.compile(r".*/charts\b.*"), json=charts)
+    responses.add(responses.GET, re.compile(r".*/toppodcasts\b.*"), json=toppodcasts)
     responses.add(responses.GET, re.compile(r".*/lookup\b.*"), json=lookup)
     assert library.browse("podcast+itunes:genre:1001") == [
         Ref.directory(name="Top Bar", uri="podcast+itunes:charts:1001"),
