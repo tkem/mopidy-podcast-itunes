@@ -51,9 +51,9 @@ _SCHEME = Extension.ext_name.replace("-", "+")
 
 def artists(item):
     if "artistName" in item:
-        return [models.Artist(name=item["artistName"])]
+        return frozenset([models.Artist(name=item["artistName"])])
     else:
-        return None
+        return frozenset()
 
 
 def directory(type, g, name=None, scheme=_SCHEME):

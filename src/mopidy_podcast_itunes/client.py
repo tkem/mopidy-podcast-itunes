@@ -1,6 +1,7 @@
 import json
 import logging
 from functools import reduce
+from urllib.error import HTTPError
 from urllib.parse import urljoin
 
 from . import Extension
@@ -76,22 +77,22 @@ class iTunesPodcastClient:
         explicit=None,
         genre_id=None,
     ):
-        result = self.__request(
-            urljoin(self.__base_url, SEARCH_PATH),
-            params={
-                "term": term,
-                "country": self.__country,
-                "media": media,
-                "entity": entity,
-                "attribute": attribute,
-                "limit": limit,
-                # apparently only lowercase will work, contrary to iTunes specs
-                "explicit": (explicit.lower() if explicit else None),
-                # undocumented, and apparently not really working as expected
-                "genreId": genre_id,
-            },
-        )
-        return result.get("results", [])
+        params = {
+            "term": term,
+            "country": self.__country,
+            "media": media,
+            "entity": entity,
+            "attribute": attribute,
+            "limit": limit,
+            "explicit": (explicit.lower() if explicit else None),
+            "genreId": genre_id,  # undocumented, and not really working as expected
+        }
+        try:
+            res = self.__request(urljoin(self.__base_url, SEARCH_PATH), params=params)
+            return res.get("results", [])
+        except HTTPError as e:
+            logger.error("Error searching for %s: %s", term, e)
+            return []
 
     def __request(self, url, **kwargs):
         response = self.__session.get(url, timeout=self.__timeout, **kwargs)

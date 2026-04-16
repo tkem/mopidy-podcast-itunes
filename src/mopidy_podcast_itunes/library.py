@@ -70,6 +70,10 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
         for item in self.backend.client.charts(id, **self.__charts_kwargs):
             try:
                 ref = translator.ref(item)
+            except KeyError as e:
+                logger.debug(
+                    "Skipping iTunes charts item with missing key %s: %s", e, item
+                )
             except Exception as e:
                 logger.error("Error converting iTunes charts item: %s %s", e, item)
             else:
