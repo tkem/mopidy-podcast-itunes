@@ -2,7 +2,7 @@ import pathlib
 
 from mopidy import config, ext, httpclient
 
-__version__ = "3.1.2"
+__version__ = "3.1.3"
 
 COUNTRIES = [
     "AD",
