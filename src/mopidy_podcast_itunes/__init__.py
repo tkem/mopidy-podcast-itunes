@@ -262,7 +262,6 @@ MAX_LIMIT = 200  # absolute limit specified by iTunes Store API
 
 
 class Extension(ext.Extension):
-
     dist_name = "Mopidy-Podcast-iTunes"
     ext_name = "podcast-itunes"
     version = __version__

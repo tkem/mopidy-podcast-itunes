@@ -7,7 +7,6 @@ from .library import iTunesPodcastLibraryProvider
 
 
 class iTunesPodcastBackend(pykka.ThreadingActor, backend.Backend):
-
     uri_schemes = ["podcast+itunes"]
 
     def __init__(self, config, audio):
