@@ -14,7 +14,6 @@ def test_get_config_schema():
     assert "base_url" in schema
     assert "country" in schema
     assert "explicit" in schema
-    assert "charts" in schema
     assert "charts_limit" in schema
     assert "search_limit" in schema
     assert "timeout" in schema

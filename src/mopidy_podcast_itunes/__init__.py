@@ -279,14 +279,6 @@ class Extension(ext.Extension):
             search_limit=config.Integer(minimum=1, maximum=MAX_LIMIT, optional=True),
             timeout=config.Integer(minimum=1, optional=True),
             retries=config.Integer(minimum=0),
-            # no longer used
-            charts=config.Deprecated(),
-            charts_format=config.Deprecated(),
-            episode_format=config.Deprecated(),
-            genre_format=config.Deprecated(),
-            podcast_format=config.Deprecated(),
-            root_genre_id=config.Deprecated(),
-            root_name=config.Deprecated(),
         )
         return schema
 
