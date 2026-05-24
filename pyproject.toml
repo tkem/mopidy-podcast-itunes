@@ -27,7 +27,7 @@ classifiers = [
 ]
 dependencies = [
     "mopidy >= 4.0.0",
-    "mopidy-podcast >= 3.0.1",
+    "mopidy-podcast >= 4.0.0",
     "pykka >= 4.1",
     "requests >= 2.32"
 ]

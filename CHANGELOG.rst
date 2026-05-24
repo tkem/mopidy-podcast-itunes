@@ -1,3 +1,13 @@
+4.0.0 (2026-05-25)
+===================
+
+- Require Mopidy >= 4.0.0.
+
+- Remove deprecated configuration entries.
+
+- Update build environment.
+
+
 v3.1.3 (2026-04-16)
 ===================
 
