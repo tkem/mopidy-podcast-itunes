@@ -1,8 +1,9 @@
 import json
 import logging
 from functools import reduce
-from urllib.error import HTTPError
 from urllib.parse import urljoin
+
+import requests
 
 from . import Extension
 
@@ -22,8 +23,6 @@ def genres(result, g):
 
 
 def http_adapter(config):
-    import requests
-
     return requests.adapters.HTTPAdapter(
         max_retries=config[Extension.ext_name]["retries"]
     )
@@ -90,7 +89,7 @@ class iTunesPodcastClient:
         try:
             res = self.__request(urljoin(self.__base_url, SEARCH_PATH), params=params)
             return res.get("results", [])
-        except HTTPError as e:
+        except requests.RequestException as e:
             logger.error("Error searching for %s: %s", term, e)
             return []
 

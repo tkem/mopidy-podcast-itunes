@@ -1,6 +1,7 @@
 import re
 
 import pytest
+import requests
 import responses
 from mopidy import models
 
@@ -57,3 +58,17 @@ def test_search_query_error(library, monkeypatch):
 
     monkeypatch.setattr(translator, "query", query)
     assert library.search({"any": ["foo"]}) is None
+
+
+@responses.activate
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"status": 503},
+        {"body": requests.ConnectionError("connection refused")},
+        {"body": requests.Timeout("timed out")},
+    ],
+)
+def test_search_http_error(library, kwargs):
+    responses.add(responses.GET, re.compile(r".*/search\b.*"), **kwargs)
+    assert library.search({"any": ["foo"]}) == models.SearchResult()
