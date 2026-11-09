@@ -37,6 +37,8 @@ review process.
 
 - The library provider logs errors and returns empty or partial results instead of
   raising (`BLE001` is ignored for this reason); clients must not see exceptions.
+  `search()` returns `None` for queries it cannot translate, and the client's
+  `search()` returns no results for any `requests` error.
 - Search by genre (`genreId`) and `authorTerm`/`titleTerm` for episodes do not work
   reliably on the iTunes side; the `FIXME` comments document this.
 - The code carries no type annotations; pyright runs in `standard` mode and is not
