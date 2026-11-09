@@ -1,8 +1,7 @@
+import pytest
 from mopidy import models
 
 from mopidy_podcast_itunes import translator
-
-import pytest
 
 
 @pytest.mark.parametrize(

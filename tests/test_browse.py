@@ -1,10 +1,8 @@
 import re
 
-from mopidy.models import Ref
-
 import pytest
-
 import responses
+from mopidy.models import Ref
 
 
 @pytest.fixture

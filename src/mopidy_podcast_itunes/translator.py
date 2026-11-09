@@ -1,6 +1,5 @@
-from mopidy import models
-
 import uritools
+from mopidy import models
 
 from . import Extension
 
@@ -71,7 +70,7 @@ def model(item):
         return translate(item)
 
 
-def query(query, uris=tuple(), exact=False):
+def query(query, uris=(), exact=False):
     if exact:
         raise NotImplementedError("Exact queries not supported")
     try:
