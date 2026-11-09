@@ -48,7 +48,8 @@ class iTunesPodcastLibraryProvider(backend.LibraryProvider):
         except NotImplementedError:
             return None  # query not supported
         except Exception as e:
-            logger.error("%s", e)
+            logger.error("Error translating query %s: %s", query, e)
+            return None
         else:
             kwargs.update(self.__search_kwargs)
         results = collections.defaultdict(list)
