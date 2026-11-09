@@ -4,6 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "Mopidy-Podcast-iTunes"
+dynamic = ["version"]
 description = "Mopidy extension for searching and browsing podcasts on Apple Podcasts"
 authors = [
     {name = "Thomas Kemmer", email = "tkemmer@computer.org"}
@@ -31,7 +32,6 @@ dependencies = [
     "pykka >= 4.1",
     "requests >= 2.32"
 ]
-dynamic = ["version"]
 
 [project.entry-points."mopidy.ext"]
 podcast-itunes = "mopidy_podcast_itunes:Extension"
