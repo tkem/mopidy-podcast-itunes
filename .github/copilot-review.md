@@ -30,12 +30,6 @@ fails with 38 errors (Code #3). **Coverage:** 93 % with branches; gaps in
 | 3 | Info | `translator.query()` is tested only for supported queries; the three `NotImplementedError` branches and `search()` returning `None` for them are not. |
 | 4 | Info | The `config` fixture still carries the removed `charts` key; two `DeprecationWarning`s come from `mopidy.types` at import time, not from this package. |
 
-## Docs (`docs/index.rst`)
-
-| # | Priority | Finding |
-|---|----------|---------|
-| 1 | Info | `README.rst` still shows a "code style: black" badge, although formatting is done with `ruff format`. |
-
 ## Changelog
 
 | # | Priority | Finding |
