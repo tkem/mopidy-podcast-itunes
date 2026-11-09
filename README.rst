@@ -3,28 +3,24 @@ Mopidy-Podcast-iTunes
 *********************
 
 .. image:: https://img.shields.io/pypi/v/Mopidy-Podcast-iTunes
-    :target: https://pypi.org/project/Mopidy-Podcast-iTunes/
-    :alt: Latest PyPI version
+   :target: https://pypi.org/project/Mopidy-Podcast-iTunes/
+   :alt: Latest PyPI version
 
 .. image:: https://img.shields.io/github/actions/workflow/status/tkem/mopidy-podcast-itunes/ci.yml
    :target: https://github.com/tkem/mopidy-podcast-itunes/actions/workflows/ci.yml
    :alt: CI build status
 
 .. image:: https://img.shields.io/readthedocs/mopidy-podcast-itunes
-    :target: https://mopidy-podcast-itunes.readthedocs.io/
-    :alt: Documentation build status
+   :target: https://mopidy-podcast-itunes.readthedocs.io/
+   :alt: Documentation build status
 
-.. image:: https://img.shields.io/codecov/c/gh/tkem/mopidy-podcast-itunes
-    :target: https://codecov.io/gh/tkem/mopidy-podcast-itunes
-    :alt: Test coverage
+.. image:: https://img.shields.io/codecov/c/github/tkem/mopidy-podcast-itunes/master.svg
+   :target: https://codecov.io/gh/tkem/mopidy-podcast-itunes
+   :alt: Test coverage
 
 .. image:: https://img.shields.io/github/license/tkem/mopidy-podcast-itunes
    :target: https://raw.github.com/tkem/mopidy-podcast-itunes/master/LICENSE
    :alt: License
-
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/psf/black
-   :alt: Code style: black
 
 Mopidy-Podcast-iTunes is a Mopidy_ extension for searching and
 browsing podcasts on `Apple Podcasts`_, using the `iTunes Search
